@@ -1,41 +1,74 @@
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
+using Zenject;
 
 public class GridSystem : MonoBehaviour
 {
-    [SerializeField] private int width;
-    [SerializeField] private int height;
-    [SerializeField] private float cellSize;
-    [SerializeField] private Tile tilePrefab;
+    [SerializeField] private GridLayout gridLayout;
+    [SerializeField] private Tilemap tilemap;
+    [SerializeField] private TileBase tileBase;
 
-    private Tile[,] gridArray;
+    [Inject] private DiContainer diContainer;
 
-    void Awake()
+    public GridLayout GridLayout => gridLayout;
+
+    #region Tilemap Management
+    public static TileBase[] GetTilesBlock(BoundsInt area, Tilemap tilemap)
     {
-        Initialize();
+        TileBase[] tilesBase = new TileBase[area.size.x * area.size.y];
+
+        int counter = 0;
+        foreach (Vector3Int posWithin in area.allPositionsWithin)
+        {
+            tilesBase[counter] = tilemap.GetTile(new Vector3Int(posWithin.x, posWithin.y, 0));
+            counter++;
+        }
+
+        return tilesBase;
     }
 
-    public Tile GetTile(Vector3 worldPosition)
+    public static void SetTilesBlock(BoundsInt area, Tilemap tilemap, TileBase tileBase)
     {
-        GetXY(worldPosition, out int x, out int y);
-        return gridArray[x, y];
+        TileBase[] tilesBase = new TileBase[area.size.x * area.size.y];
+        FillTiles(tilesBase, tileBase);
+        tilemap.SetTilesBlock(area, tilesBase);
     }
 
-    private void GetXY(Vector3 worldPosition, out int x, out int y)
+    public static void FillTiles(TileBase[] tilesBase, TileBase tileBase)
     {
-        x = Mathf.FloorToInt(worldPosition.x / cellSize);
-        y = Mathf.FloorToInt(worldPosition.y / cellSize);
+        for (int i = 0; i < tilesBase.Length; i++)
+        {
+            tilesBase[i] = tileBase;
+        }
     }
 
-    private void Initialize()
+    public static void ClearArea(BoundsInt area, Tilemap tilemap)
     {
-        gridArray = new Tile[width, height];
+        SetTilesBlock(area, tilemap, null);
+    }
+    #endregion
 
-        for (int x = 0; x < width; x++)
-            for (int y = 0; y < height; y++)
-                gridArray[x, y] = Instantiate(tilePrefab, GetWorldPosition(x, y) + GetOffset(), Quaternion.identity);
+    #region Building
+    public void InitiazeObjectOnPosition(GameObject build, Vector3 position)
+    {
+        position.z = 0;
+        Vector3Int cellPos = gridLayout.WorldToCell(position);
+        Vector3 pos = gridLayout.CellToLocalInterpolated(cellPos) + Vector3.up * gridLayout.cellSize.y / 2f;
+        diContainer.InstantiatePrefab(build, pos, Quaternion.identity, null);
     }
 
-    private Vector3 GetWorldPosition(int x, int y) => new Vector3(x, y) * cellSize;
+    public bool CanTakeArea(BoundsInt area)
+    {
+        return GetTilesBlock(area, tilemap).All(x => x != tileBase);
+    }
 
-    private Vector3 GetOffset() => .5f * cellSize * new Vector3(1, 1);
+    public void TakeArea(BoundsInt area)
+    {
+        SetTilesBlock(area, tilemap, tileBase);
+    }
+    #endregion
 }

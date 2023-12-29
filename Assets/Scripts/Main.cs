@@ -10,18 +10,20 @@ public class Main : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 positionClick = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Tile tile = grid.GetTile(positionClick);
-            switch (tile.State)
-            {
-                case TileState.Default:
-                    tile.ActionInvoke();
-                    break;
-                case TileState.Free:
-                    seed.Plant(tile.transform.position);
-                    break;
-                case TileState.Busy:
-                    break;
-            }
+            //if (grid.TryGetTile(positionClick, out Tile tile))
+            //{
+            //    switch (tile.State)
+            //    {
+            //        case TileState.Default:
+            //            tile.ActionInvoke();
+            //            break;
+            //        case TileState.Free:
+            //            seed.Plant(tile.transform.position);
+            //            break;
+            //        case TileState.Busy:
+            //            break;
+            //    }
+            //}
         }
     }
 }
