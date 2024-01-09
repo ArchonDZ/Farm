@@ -1,19 +1,15 @@
-using DG.Tweening;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-public class InventoryPanel : MonoBehaviour
+public abstract class CurtainPanel : MonoBehaviour
 {
     [SerializeField] private Button buttonOpen;
-    [SerializeField] private RectTransform rectTransformPanel;
+    [SerializeField] protected RectTransform rectTransformPanel;
 
     [Inject] private readonly GameArea gameArea;
 
-    private bool isOpened;
+    protected bool isOpened;
 
     void Awake()
     {
@@ -21,11 +17,14 @@ public class InventoryPanel : MonoBehaviour
         gameArea.OnPointerClickEvent += ClosePanel;
     }
 
-    public void ClosePanel()
+    public void Initialize()
     {
-        rectTransformPanel.DOAnchorPosX(0, 0.5f);
-        isOpened = false;
+
     }
+
+    public abstract void ClosePanel();
+
+    protected abstract void OpenPanel();
 
     private void ChangePanel()
     {
@@ -37,12 +36,5 @@ public class InventoryPanel : MonoBehaviour
         {
             OpenPanel();
         }
-
-    }
-
-    private void OpenPanel()
-    {
-        rectTransformPanel.DOAnchorPosX(rectTransformPanel.rect.width, 0.5f);
-        isOpened = true;
     }
 }

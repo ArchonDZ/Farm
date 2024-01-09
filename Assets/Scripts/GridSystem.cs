@@ -1,9 +1,6 @@
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
 using Zenject;
 
 public class GridSystem : MonoBehaviour
