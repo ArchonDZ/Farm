@@ -17,11 +17,6 @@ public abstract class CurtainPanel : MonoBehaviour
         gameArea.OnPointerClickEvent += ClosePanel;
     }
 
-    public void Initialize()
-    {
-
-    }
-
     public abstract void ClosePanel();
 
     protected abstract void OpenPanel();
