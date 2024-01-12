@@ -7,38 +7,50 @@ public class CollectionSystem : MonoBehaviour
 {
     [SerializeField] private CollectionList collectionListSeed;
 
+    private List<CollectibleData> collectibleDataList = new List<CollectibleData>();
     private List<CollectibleItem> collectibleItemList = new List<CollectibleItem>();
-    [SerializeField] private List<CollectibleData> collectibleDataList = new List<CollectibleData>();
 
     private List<CollectiblePackage> collectiblePackageSeed = new List<CollectiblePackage>();
 
+    void Awake()
+    {
+        Load();
+    }
+
     [ContextMenu("Load")]
-    public void Load()
+    private void Load()
     {
         collectibleDataList = SaveGame.Load<List<CollectibleData>>("save_collectible.dat", true, "FarmOfDmitryZinovsky");
         collectibleItemList = Resources.LoadAll<CollectibleItem>("CollectibleItems").ToList();
+        InitializeLists();
+    }
 
+    [ContextMenu("Save")]
+    private void Save()
+    {
+        SaveGame.Save("save_collectible.dat", collectibleDataList, true);
+    }
+
+    private void InitializeLists()
+    {
         for (int i = 0; i < collectibleDataList.Count; i++)
         {
             int collectibleItemIndex = collectibleItemList.FindIndex(x => x.Id == collectibleDataList[i].Id);
             if (collectibleItemIndex != -1)
             {
-                switch (collectibleItemList[collectibleItemIndex].ItemType)
-                {
-                    case ItemType.None:
-                        break;
-                    case ItemType.Seed:
-                        collectiblePackageSeed.Add(new CollectiblePackage(collectibleDataList[i], collectibleItemList[collectibleItemIndex]));
-                        break;
-                }
+                GetListByType(collectibleItemList[collectibleItemIndex].ItemType).Add(new CollectiblePackage(collectibleDataList[i], collectibleItemList[collectibleItemIndex]));
             }
         }
         collectionListSeed.Load(collectiblePackageSeed);
     }
 
-    [ContextMenu("Save")]
-    public void Save()
+    private List<CollectiblePackage> GetListByType(ItemType itemType)
     {
-        SaveGame.Save("save_collectible.dat", collectibleDataList, true);
+        return itemType switch
+        {
+            ItemType.None => null,
+            ItemType.Seed => collectiblePackageSeed,
+            _ => null
+        };
     }
 }

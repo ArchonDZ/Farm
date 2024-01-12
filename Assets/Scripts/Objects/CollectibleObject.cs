@@ -9,7 +9,7 @@ public class CollectibleObject : MonoBehaviour
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI countText;
     [SerializeField] private Image iconImage;
-    
+
     private CollectiblePackage collectiblePackage;
 
     public void Initialize(CollectiblePackage package, CurtainPanel curtainPanel)
