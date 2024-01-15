@@ -7,6 +7,7 @@ public class CollectibleItem : ScriptableObject
     public ItemType ItemType;
     public string Name;
     public Sprite Icon;
+    public GameObject Prefab;
 }
 
 public enum ItemType

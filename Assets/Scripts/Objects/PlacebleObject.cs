@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -9,8 +7,6 @@ public class PlacebleObject : MonoBehaviour
 
     [Inject] private GridSystem gridSystem;
 
-    private Vector3 origin;
-    
     public bool IsPlaced { get; private set; }
 
     public bool CanBePlaced()

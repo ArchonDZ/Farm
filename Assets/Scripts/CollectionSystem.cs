@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class CollectionSystem : MonoBehaviour
 {
+    [Header("Collection Lists")]
     [SerializeField] private CollectionList collectionListSeed;
 
-    private List<CollectibleData> collectibleDataList = new List<CollectibleData>();
-    private List<CollectibleItem> collectibleItemList = new List<CollectibleItem>();
+    private List<CollectibleData> collectibleDataList;
+    private List<CollectibleItem> collectibleItemList;
 
     private List<CollectiblePackage> collectiblePackageSeed = new List<CollectiblePackage>();
 
@@ -33,6 +34,8 @@ public class CollectionSystem : MonoBehaviour
 
     private void InitializeLists()
     {
+        collectibleDataList ??= new List<CollectibleData>() { new CollectibleData(1, 3) };
+
         for (int i = 0; i < collectibleDataList.Count; i++)
         {
             int collectibleItemIndex = collectibleItemList.FindIndex(x => x.Id == collectibleDataList[i].Id);

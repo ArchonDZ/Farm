@@ -4,21 +4,15 @@ using Zenject;
 [RequireComponent(typeof(PlacebleObject))]
 public class DragableObject : MonoBehaviour
 {
+    [SerializeField] private PlacebleObject placebleObject;
+
     [Inject] private GridSystem gridSystem;
 
-    private PlacebleObject placebleObject;
     private Camera mainCamera;
-    private Vector3 offset;
-
-    void Awake()
-    {
-        placebleObject = GetComponent<PlacebleObject>();
-    }
 
     void Start()
     {
         mainCamera = Camera.main;
-        offset = mainCamera.ScreenToWorldPoint(Input.mousePosition) - transform.position;
     }
 
     void Update()

@@ -137,3 +137,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1777db8ad499fb0448f99913574edbce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  placebleObject: {fileID: 1985155307665187682}

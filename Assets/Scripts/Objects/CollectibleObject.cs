@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 [RequireComponent(typeof(DragableUIFromCurtain))]
 public class CollectibleObject : MonoBehaviour
@@ -9,6 +10,8 @@ public class CollectibleObject : MonoBehaviour
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI countText;
     [SerializeField] private Image iconImage;
+
+    [Inject] private GridSystem gridSystem;
 
     private CollectiblePackage collectiblePackage;
 
@@ -21,5 +24,11 @@ public class CollectibleObject : MonoBehaviour
         countText.text = collectiblePackage.CollectibleData.Count.ToString();
 
         dragable.Initialize(curtainPanel);
+        dragable.OnEndDragEvent += Dragable_OnEndDragEvent;
+    }
+
+    private void Dragable_OnEndDragEvent()
+    {
+        gridSystem.InitiazeObjectOnPosition(collectiblePackage.CollectibleItem.Prefab, Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 }

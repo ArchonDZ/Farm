@@ -1,9 +1,13 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class DragableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    public event Action OnBeginDragEvent;
+    public event Action OnEndDragEvent;
+
     [SerializeField] protected Image dragableImage;
 
     private Canvas canvas;
@@ -18,6 +22,7 @@ public class DragableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     {
         dragableImage.maskable = false;
         originPos = dragableImage.rectTransform.anchoredPosition;
+        OnBeginDragEvent?.Invoke();
     }
 
     public virtual void OnDrag(PointerEventData eventData)
@@ -29,5 +34,6 @@ public class DragableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     {
         dragableImage.maskable = true;
         dragableImage.rectTransform.anchoredPosition = originPos;
+        OnEndDragEvent?.Invoke();
     }
 }
