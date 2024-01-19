@@ -885,7 +885,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectionListSeed: {fileID: 1890394539}
-  collectibleDataList: []
 --- !u!4 &915060913
 Transform:
   m_ObjectHideFlags: 0

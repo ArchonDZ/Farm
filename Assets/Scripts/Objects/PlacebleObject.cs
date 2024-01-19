@@ -1,8 +1,11 @@
+using System;
 using UnityEngine;
 using Zenject;
 
 public class PlacebleObject : MonoBehaviour
 {
+    public event Action OnPlaceEvent;
+
     [SerializeField] private BoundsInt area;
 
     [Inject] private GridSystem gridSystem;
@@ -22,17 +25,17 @@ public class PlacebleObject : MonoBehaviour
         areaTemp.position = gridSystem.GridLayout.LocalToCell(transform.position);
         gridSystem.TakeArea(areaTemp);
         IsPlaced = true;
+        OnPlaceEvent?.Invoke();
     }
 
-    public void CheckPlacement()
+    public bool TryPlace()
     {
         if (CanBePlaced())
         {
             Place();
+            return true;
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+
+        return false;
     }
 }

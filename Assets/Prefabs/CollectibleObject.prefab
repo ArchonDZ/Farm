@@ -240,6 +240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dragable: {fileID: 8486631861682181001}
+  dragableObjectPrefab: {fileID: -4104138817028157030, guid: 49fdc75d525f7d94d8dfc111254fbcdd, type: 3}
   titleText: {fileID: 5470294630881846216}
   countText: {fileID: 6465733179922775673}
   iconImage: {fileID: 1872914309961441522}

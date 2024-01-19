@@ -27,8 +27,15 @@ public class CollectibleObject : MonoBehaviour
         dragable.OnEndDragEvent += Dragable_OnEndDragEvent;
     }
 
+    public void Spend()
+    {
+        collectiblePackage.CollectibleData.Count--;
+        countText.text = collectiblePackage.CollectibleData.Count.ToString();
+    }
+
     private void Dragable_OnEndDragEvent()
     {
-        gridSystem.InitiazeObjectOnPosition(collectiblePackage.CollectibleItem.Prefab, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        gridSystem.InitiazeObjectOnPosition(collectiblePackage.CollectibleItem.Prefab, Camera.main.ScreenToWorldPoint(Input.mousePosition))
+            .Initialize(this, collectiblePackage.CollectibleItem.Icon);
     }
 }

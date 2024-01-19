@@ -50,12 +50,20 @@ public class GridSystem : MonoBehaviour
     #endregion
 
     #region Building
-    public void InitiazeObjectOnPosition(GameObject build, Vector3 position)
+    public GameObject InitiazeObjectOnPosition(GameObject build, Vector3 position)
     {
         position.z = 0;
         Vector3Int cellPos = gridLayout.WorldToCell(position);
         Vector3 pos = gridLayout.CellToLocalInterpolated(cellPos) + Vector3.up * gridLayout.cellSize.y / 2f;
-        diContainer.InstantiatePrefab(build, pos, Quaternion.identity, null);
+        return diContainer.InstantiatePrefab(build, pos, Quaternion.identity, null);
+    }
+
+    public T InitiazeObjectOnPosition<T>(T build, Vector3 position) where T : Object
+    {
+        position.z = 0;
+        Vector3Int cellPos = gridLayout.WorldToCell(position);
+        Vector3 pos = gridLayout.CellToLocalInterpolated(cellPos) + Vector3.up * gridLayout.cellSize.y / 2f;
+        return diContainer.InstantiatePrefabForComponent<T>(build, pos, Quaternion.identity, null);
     }
 
     public bool CanTakeArea(BoundsInt area)

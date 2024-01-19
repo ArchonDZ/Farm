@@ -4,11 +4,13 @@ using Zenject;
 [RequireComponent(typeof(PlacebleObject))]
 public class DragableObject : MonoBehaviour
 {
+    [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private PlacebleObject placebleObject;
 
     [Inject] private GridSystem gridSystem;
 
     private Camera mainCamera;
+    private CollectibleObject collectibleObject;
 
     void Start()
     {
@@ -27,8 +29,18 @@ public class DragableObject : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0))
         {
-            placebleObject.CheckPlacement();
-            enabled = false;
+            if (placebleObject.TryPlace())
+            {
+                collectibleObject.Spend();
+            }
+
+            Destroy(gameObject);
         }
+    }
+
+    public void Initialize(CollectibleObject collectible, Sprite sprite)
+    {
+        collectibleObject = collectible;
+        spriteRenderer.sprite = sprite;
     }
 }
