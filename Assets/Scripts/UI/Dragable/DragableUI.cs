@@ -13,6 +13,8 @@ public class DragableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     private Canvas canvas;
     private Vector3 originPos;
 
+    public bool IsDragging { get; private set; }
+
     void Awake()
     {
         canvas = GetComponentInParent<Canvas>();
@@ -20,6 +22,7 @@ public class DragableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        IsDragging = true;
         dragableImage.maskable = false;
         originPos = dragableImage.rectTransform.anchoredPosition;
         OnBeginDragEvent?.Invoke();
@@ -32,6 +35,7 @@ public class DragableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        IsDragging = false;
         dragableImage.maskable = true;
         dragableImage.rectTransform.anchoredPosition = originPos;
         OnEndDragEvent?.Invoke();

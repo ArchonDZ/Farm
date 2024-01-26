@@ -37,6 +37,21 @@ public class Plant : MonoBehaviour
         Growth();
     }
 
+    public void Dig()
+    {
+        Debug.Log("Dig");
+    }
+
+    public void Irrigate()
+    {
+        Debug.Log("Irrigate");
+    }
+
+    public void Harvest()
+    {
+        Debug.Log("Harvest");
+    }
+
     private void InitPlant(int index)
     {
         Stage = stages[index];

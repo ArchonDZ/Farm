@@ -15,5 +15,5 @@ MonoBehaviour:
   Id: 1
   ItemType: 1
   Name: Mystery
-  Icon: {fileID: 21300000, guid: d9f4495032397124c8774bddcb66964c, type: 3}
+  Icon: {fileID: 21300000, guid: f6b0955726bd49c46abdf904db365759, type: 3}
   Prefab: {fileID: -4104138817028157030, guid: 49fdc75d525f7d94d8dfc111254fbcdd, type: 3}
