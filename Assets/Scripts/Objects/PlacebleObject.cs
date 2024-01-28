@@ -38,4 +38,15 @@ public class PlacebleObject : MonoBehaviour
 
         return false;
     }
+
+    public void Clear()
+    {
+        if (IsPlaced)
+        {
+            BoundsInt areaTemp = area;
+            areaTemp.position = gridSystem.GridLayout.LocalToCell(transform.position);
+            gridSystem.ClearArea(areaTemp);
+            IsPlaced = false;
+        }
+    }
 }

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6094331806998484800}
   - component: {fileID: 1280358116565412579}
+  - component: {fileID: 63547384130703875}
   - component: {fileID: 3216736138069626618}
   - component: {fileID: 7462352342202645241}
   m_Layer: 6
@@ -75,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: d9f4495032397124c8774bddcb66964c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4971ca95bffc4374286dafde23141433, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -86,6 +87,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &63547384130703875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4611049578492767100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bd2b6edc4cdd6546b9827258c91457e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  area:
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Size: {x: 1, y: 1, z: 1}
 --- !u!114 &3216736138069626618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,6 +115,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 1280358116565412579}
+  placebleObject: {fileID: 63547384130703875}
   stages:
   - timeGrowthMin: 5
     timeGrowthMax: 10

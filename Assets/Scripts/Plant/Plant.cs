@@ -13,33 +13,38 @@ public struct PlantStage
 public class Plant : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private PlacebleObject placebleObject;
     [SerializeField] private List<PlantStage> stages = new List<PlantStage>();
 
-    private float startStageTime;
-    private float endStageTime;
-    private int indexStage;
-
-    public PlantStage Stage { get; private set; }
+    public PlantStage Stage { get; set; }
+    public PlantState State { get; set; }
+    public List<PlantStage> PlantStages => stages;
 
     void Awake()
     {
-        InitPlant(indexStage);
+        placebleObject.Place();
+    }
+
+    void Start()
+    {
+        State = new Growth(this, UnityEngine.Random.Range(stages[0].timeGrowthMin, stages[0].timeGrowthMax));
     }
 
     void Update()
     {
-        if (indexStage == stages.Count - 1)
-        {
-            enabled = false;
-            return;
-        }
+        State.UpdateState();
+    }
 
-        Growth();
+    public void UpdateSpriteStage()
+    {
+        spriteRenderer.sprite = Stage.sprite;
     }
 
     public void Dig()
     {
         Debug.Log("Dig");
+        placebleObject.Clear();
+        Destroy(gameObject);
     }
 
     public void Irrigate()
@@ -50,22 +55,10 @@ public class Plant : MonoBehaviour
     public void Harvest()
     {
         Debug.Log("Harvest");
-    }
-
-    private void InitPlant(int index)
-    {
-        Stage = stages[index];
-        spriteRenderer.sprite = Stage.sprite;
-        startStageTime = Time.time;
-        endStageTime = UnityEngine.Random.Range(Stage.timeGrowthMin, Stage.timeGrowthMax);
-        indexStage = index;
-    }
-
-    private void Growth()
-    {
-        if (Time.time - startStageTime > endStageTime)
+        if (State is WaitHarvest)
         {
-            InitPlant(indexStage + 1);
+            placebleObject.Clear();
+            Destroy(gameObject);
         }
     }
 }
