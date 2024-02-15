@@ -12,6 +12,7 @@ public class CollectibleObject : MonoBehaviour
     [SerializeField] private Image iconImage;
 
     [Inject] private GridSystem gridSystem;
+    [Inject] private PlacementHelper placementHelper;
 
     private CollectiblePackage collectiblePackage;
 
@@ -24,18 +25,19 @@ public class CollectibleObject : MonoBehaviour
         countText.text = collectiblePackage.CollectibleData.Count.ToString();
 
         dragable.Initialize(curtainPanel);
-        dragable.OnEndDragEvent += Dragable_OnEndDragEvent;
+        dragable.OnLeftCurtainEvent += Dragable_OnLeftCurtainEvent;
+        placementHelper.OnCanBePlacedEvent += Spend;
     }
 
-    public void Spend()
+    private void Dragable_OnLeftCurtainEvent()
+    {
+        placementHelper.Activate(collectiblePackage.CollectibleItem.Icon);
+    }
+
+    private void Spend()
     {
         collectiblePackage.CollectibleData.Count--;
         countText.text = collectiblePackage.CollectibleData.Count.ToString();
-    }
-
-    private void Dragable_OnEndDragEvent()
-    {
-        gridSystem.InitiazeObjectOnPosition(collectiblePackage.CollectibleItem.Prefab, Camera.main.ScreenToWorldPoint(Input.mousePosition))
-            .Initialize(this, collectiblePackage.CollectibleItem.Icon);
+        gridSystem.InitiazeObjectOnPosition(collectiblePackage.CollectibleItem.Prefab, Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 }

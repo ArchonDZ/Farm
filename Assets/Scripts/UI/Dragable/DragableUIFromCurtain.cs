@@ -1,8 +1,11 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class DragableUIFromCurtain : DragableUI
 {
+    public event Action OnLeftCurtainEvent;
+
     [SerializeField] private RectTransform rectTransformBorder;
 
     private CurtainPanel curtainPanel;
@@ -15,6 +18,7 @@ public class DragableUIFromCurtain : DragableUI
             curtainPanel.ClosePanel();
             eventData.pointerDrag = null;
             OnEndDrag(eventData);
+            OnLeftCurtainEvent?.Invoke();
         }
     }
 

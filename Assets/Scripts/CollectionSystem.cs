@@ -51,7 +51,6 @@ public class CollectionSystem : MonoBehaviour
     {
         return itemType switch
         {
-            ItemType.None => null,
             ItemType.Seed => collectiblePackageSeed,
             _ => null
         };

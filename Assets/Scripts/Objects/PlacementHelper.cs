@@ -1,16 +1,18 @@
+using System;
 using UnityEngine;
 using Zenject;
 
 [RequireComponent(typeof(PlacebleObject))]
-public class DragableObject : MonoBehaviour
+public class PlacementHelper : MonoBehaviour
 {
+    public event Action OnCanBePlacedEvent;
+
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private PlacebleObject placebleObject;
 
     [Inject] private GridSystem gridSystem;
 
     private Camera mainCamera;
-    private CollectibleObject collectibleObject;
 
     void Start()
     {
@@ -29,18 +31,17 @@ public class DragableObject : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0))
         {
-            if (placebleObject.TryPlace())
+            if (placebleObject.CanBePlaced())
             {
-                collectibleObject.Spend();
+                OnCanBePlacedEvent?.Invoke();
             }
-
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 
-    public void Initialize(CollectibleObject collectible, Sprite sprite)
+    public void Activate(Sprite sprite)
     {
-        collectibleObject = collectible;
         spriteRenderer.sprite = sprite;
+        gameObject.SetActive(true);
     }
 }
