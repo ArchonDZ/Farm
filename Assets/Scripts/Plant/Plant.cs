@@ -10,11 +10,12 @@ public struct PlantStage
     public Sprite sprite;
 }
 
-public class Plant : MonoBehaviour
+public class Plant : InitializableObject
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private PlacebleObject placebleObject;
-    [SerializeField] private List<PlantStage> stages = new List<PlantStage>();
+
+    private List<PlantStage> stages;
 
     public PlantStage Stage { get; set; }
     public PlantState State { get; set; }
@@ -33,6 +34,14 @@ public class Plant : MonoBehaviour
     void Update()
     {
         State.UpdateState();
+    }
+
+    public override void Initialize(InitializableItem initializableItem)
+    {
+        if (initializableItem is PlantItem item)
+        {
+            stages = item.stages;
+        }
     }
 
     public void UpdateSpriteStage()

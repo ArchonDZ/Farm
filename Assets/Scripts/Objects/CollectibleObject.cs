@@ -38,6 +38,7 @@ public class CollectibleObject : MonoBehaviour
     {
         collectiblePackage.CollectibleData.Count--;
         countText.text = collectiblePackage.CollectibleData.Count.ToString();
-        gridSystem.InitiazeObjectOnPosition(collectiblePackage.CollectibleItem.Prefab, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        gridSystem.InitiazeObjectOnPosition(collectiblePackage.CollectibleItem.InitializableObject, Camera.main.ScreenToWorldPoint(Input.mousePosition))
+            .Initialize(collectiblePackage.CollectibleItem.InitializableItem);
     }
 }
