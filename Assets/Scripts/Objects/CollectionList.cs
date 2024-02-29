@@ -11,11 +11,30 @@ public class CollectionList : MonoBehaviour
 
     [Inject] private DiContainer diContainer;
 
+    private Dictionary<int, CollectibleObject> collectibleObjects = new Dictionary<int, CollectibleObject>();
+
     public void Load(List<CollectiblePackage> packages)
     {
-        foreach (CollectiblePackage package in packages)
+        for (int i = 0; i < packages.Count; i++)
         {
-            diContainer.InstantiatePrefabForComponent<CollectibleObject>(prefabCollectibleObject, parent).Initialize(package, sidePanel);
+            AddNewCollectibleObject(packages[i]);
         }
+    }
+
+    public void AddItem(CollectiblePackage package)
+    {
+        AddNewCollectibleObject(package);
+    }
+
+    public void UpdateObject(int id)
+    {
+        collectibleObjects[id].UpdateObject();
+    }
+
+    private void AddNewCollectibleObject(CollectiblePackage package)
+    {
+        CollectibleObject collectibleObject = diContainer.InstantiatePrefabForComponent<CollectibleObject>(prefabCollectibleObject, parent);
+        collectibleObject.Initialize(package, sidePanel);
+        collectibleObjects.Add(package.CollectibleItem.Id, collectibleObject);
     }
 }

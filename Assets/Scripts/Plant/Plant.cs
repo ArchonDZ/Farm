@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 [Serializable]
 public struct PlantStage
@@ -15,11 +16,13 @@ public class Plant : InitializableObject
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private PlacebleObject placebleObject;
 
-    private List<PlantStage> stages;
+    [Inject] CollectionSystem collectionSystem;
+
+    private PlantItem plantItem;
 
     public PlantStage Stage { get; set; }
     public PlantState State { get; set; }
-    public List<PlantStage> PlantStages => stages;
+    public List<PlantStage> PlantStages => plantItem.stages;
 
     void Awake()
     {
@@ -28,7 +31,7 @@ public class Plant : InitializableObject
 
     void Start()
     {
-        State = new Growth(this, UnityEngine.Random.Range(stages[0].timeGrowthMin, stages[0].timeGrowthMax));
+        State = new Growth(this, UnityEngine.Random.Range(PlantStages[0].timeGrowthMin, PlantStages[0].timeGrowthMax));
     }
 
     void Update()
@@ -38,10 +41,7 @@ public class Plant : InitializableObject
 
     public override void Initialize(InitializableItem initializableItem)
     {
-        if (initializableItem is PlantItem item)
-        {
-            stages = item.stages;
-        }
+        plantItem = initializableItem as PlantItem;
     }
 
     public void UpdateSpriteStage()
@@ -66,6 +66,7 @@ public class Plant : InitializableObject
         Debug.Log("Harvest");
         if (State is WaitHarvest)
         {
+            collectionSystem.AddDrops(plantItem.drops);
             placebleObject.Clear();
             Destroy(gameObject);
         }

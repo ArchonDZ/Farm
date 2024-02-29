@@ -22,3 +22,6 @@ MonoBehaviour:
   - timeGrowthMin: 20
     timeGrowthMax: 40
     sprite: {fileID: 21300000, guid: 5c178d5cef2c33449a94520593fd72c9, type: 3}
+  drops:
+  - Count: 2
+    CollectibleItem: {fileID: 11400000, guid: 560907c2a32388f45a1c2dc48cc765e4, type: 2}

@@ -18,6 +18,25 @@ public class CollectionSystem : MonoBehaviour
         Load();
     }
 
+    public void AddDrops(List<Drop> drops)
+    {
+        for (int i = 0; i < drops.Count; i++)
+        {
+            int collectibleDataIndex = collectibleDataList.FindIndex(x => x.Id == drops[i].CollectibleItem.Id);
+            if (collectibleDataIndex != -1)
+            {
+                collectibleDataList[collectibleDataIndex].Count += drops[i].Count;
+                GetCollectionListByType(drops[i].CollectibleItem.ItemType)?.UpdateObject(drops[i].CollectibleItem.Id);
+            }
+            else
+            {
+                CollectibleData data = new CollectibleData(drops[i].CollectibleItem.Id, drops[i].Count);
+                collectibleDataList.Add(data);
+                GetCollectionListByType(drops[i].CollectibleItem.ItemType)?.AddItem(new CollectiblePackage(data, drops[i].CollectibleItem));
+            }
+        }
+    }
+
     [ContextMenu("Load")]
     private void Load()
     {
@@ -32,6 +51,15 @@ public class CollectionSystem : MonoBehaviour
         SaveGame.Save("save_collectible.dat", collectibleDataList, true);
     }
 
+    private CollectionList GetCollectionListByType(ItemType itemType)
+    {
+        return itemType switch
+        {
+            ItemType.Seed => collectionListSeed,
+            _ => null
+        };
+    }
+
     private void InitializeLists()
     {
         collectibleDataList ??= new List<CollectibleData>() { new CollectibleData(1, 3) };
@@ -41,13 +69,14 @@ public class CollectionSystem : MonoBehaviour
             int collectibleItemIndex = collectibleItemList.FindIndex(x => x.Id == collectibleDataList[i].Id);
             if (collectibleItemIndex != -1)
             {
-                GetListByType(collectibleItemList[collectibleItemIndex].ItemType).Add(new CollectiblePackage(collectibleDataList[i], collectibleItemList[collectibleItemIndex]));
+                GetPackagesListByType(collectibleItemList[collectibleItemIndex].ItemType)?.Add(new CollectiblePackage(collectibleDataList[i], collectibleItemList[collectibleItemIndex]));
             }
         }
         collectionListSeed.Load(collectiblePackageSeed);
+        collectiblePackageSeed.Clear();
     }
 
-    private List<CollectiblePackage> GetListByType(ItemType itemType)
+    private List<CollectiblePackage> GetPackagesListByType(ItemType itemType)
     {
         return itemType switch
         {

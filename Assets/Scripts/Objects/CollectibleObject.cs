@@ -29,6 +29,26 @@ public class CollectibleObject : MonoBehaviour
         placementHelper.OnCanBePlacedEvent += Spend;
     }
 
+    public void UpdateObject()
+    {
+        if (collectiblePackage.CollectibleData.Count > 0)
+        {
+            if (!gameObject.activeSelf)
+            {
+                gameObject.SetActive(true);
+            }
+
+            countText.text = collectiblePackage.CollectibleData.Count.ToString();
+        }
+        else
+        {
+            if (gameObject.activeSelf)
+            {
+                gameObject.SetActive(false);
+            }
+        }
+    }
+
     private void Dragable_OnLeftCurtainEvent()
     {
         placementHelper.Activate(collectiblePackage.CollectibleItem.Icon);
@@ -37,7 +57,7 @@ public class CollectibleObject : MonoBehaviour
     private void Spend()
     {
         collectiblePackage.CollectibleData.Count--;
-        countText.text = collectiblePackage.CollectibleData.Count.ToString();
+        UpdateObject();
         gridSystem.InitiazeObjectOnPosition(collectiblePackage.CollectibleItem.InitializableObject, Camera.main.ScreenToWorldPoint(Input.mousePosition))
             .Initialize(collectiblePackage.CollectibleItem.InitializableItem);
     }

@@ -5,4 +5,5 @@ using UnityEngine;
 public class PlantItem : InitializableItem
 {
     public List<PlantStage> stages = new List<PlantStage>();
+    public List<Drop> drops = new List<Drop>();
 }
