@@ -14,32 +14,67 @@ public abstract class PlantState
 
 public class Growth : PlantState
 {
-    private readonly float startStageTime;
-    private readonly float endStageTime;
+    private float startGrowthTime;
+    private float endGrowthTime;
+    private float lastThirstTime;
 
-    public Growth(Plant plant, float endTime) : base(plant)
+    public Growth(Plant plant) : base(plant)
     {
-        startStageTime = Time.time;
-        endStageTime = endTime;
+        Recover();
+        InitializeGrowth();
     }
 
     public override void UpdateState()
     {
-        if (Time.time - startStageTime > endStageTime)
+        if (Time.time - startGrowthTime > endGrowthTime)
         {
-            plant.Stage = plant.PlantStages[plant.PlantStages.IndexOf(plant.Stage) + 1];
-            plant.UpdateSpriteStage();
-
-            int nextIndexStage = plant.PlantStages.IndexOf(plant.Stage) + 1;
-            if (nextIndexStage <= plant.PlantStages.Count - 1)
+            if (plant.PlantItem.Stages.IndexOf(plant.Stage) + 1 <= plant.PlantItem.Stages.Count - 1)
             {
-                plant.State = new Growth(plant, Random.Range(plant.PlantStages[nextIndexStage].timeGrowthMin, plant.PlantStages[nextIndexStage].timeGrowthMax));
+                startGrowthTime = Time.time;
+                InitializeGrowth();
             }
             else
             {
                 plant.State = new WaitHarvest(plant);
             }
         }
+
+        if (Time.time - lastThirstTime > plant.PlantItem.ThirstTime)
+        {
+            plant.State = new Thirst(plant, this);
+            endGrowthTime -= Time.time - startGrowthTime;
+        }
+    }
+
+    public void Recover()
+    {
+        startGrowthTime = Time.time;
+        lastThirstTime = Time.time;
+    }
+
+    private void InitializeGrowth()
+    {
+        plant.Stage = plant.PlantItem.Stages[plant.PlantItem.Stages.IndexOf(plant.Stage) + 1];
+        plant.UpdateSprite(plant.Stage.sprite);
+        endGrowthTime = Random.Range(plant.Stage.timeGrowthMin, plant.Stage.timeGrowthMax);
+    }
+}
+
+public class Thirst : PlantState
+{
+    private readonly Growth lastStateGrowth;
+
+    public Thirst(Plant plant, Growth growth) : base(plant)
+    {
+        lastStateGrowth = growth;
+    }
+
+    public override void UpdateState() { }
+
+    public void EndState()
+    {
+        lastStateGrowth.Recover();
+        plant.State = lastStateGrowth;
     }
 }
 
@@ -47,5 +82,8 @@ public class WaitHarvest : PlantState
 {
     public WaitHarvest(Plant plant) : base(plant) { }
 
-    public override void UpdateState() { }
+    public override void UpdateState()
+    {
+        plant.UpdateSprite(plant.PlantItem.HarvestSprite);
+    }
 }

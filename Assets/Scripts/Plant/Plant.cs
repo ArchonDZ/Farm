@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -15,14 +14,16 @@ public class Plant : InitializableObject
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private PlacebleObject placebleObject;
+    [SerializeField] private PlantStateIndicator stateIndicator;
 
     [Inject] CollectionSystem collectionSystem;
 
     private PlantItem plantItem;
+    private PlantState state;
 
     public PlantStage Stage { get; set; }
-    public PlantState State { get; set; }
-    public List<PlantStage> PlantStages => plantItem.stages;
+    public PlantState State { get => state; set { state = value; stateIndicator.UpdateState(value); } }
+    public PlantItem PlantItem => plantItem;
 
     void Awake()
     {
@@ -31,7 +32,7 @@ public class Plant : InitializableObject
 
     void Start()
     {
-        State = new Growth(this, UnityEngine.Random.Range(PlantStages[0].timeGrowthMin, PlantStages[0].timeGrowthMax));
+        State = new Growth(this);
     }
 
     void Update()
@@ -44,9 +45,9 @@ public class Plant : InitializableObject
         plantItem = initializableItem as PlantItem;
     }
 
-    public void UpdateSpriteStage()
+    public void UpdateSprite(Sprite sprite)
     {
-        spriteRenderer.sprite = Stage.sprite;
+        spriteRenderer.sprite = sprite;
     }
 
     public void Dig()
@@ -59,6 +60,10 @@ public class Plant : InitializableObject
     public void Irrigate()
     {
         Debug.Log("Irrigate");
+        if (State is Thirst thirst)
+        {
+            thirst.EndState();
+        }
     }
 
     public void Harvest()
@@ -66,7 +71,7 @@ public class Plant : InitializableObject
         Debug.Log("Harvest");
         if (State is WaitHarvest)
         {
-            collectionSystem.AddDrops(plantItem.drops);
+            collectionSystem.AddDrops(plantItem.Drops);
             placebleObject.Clear();
             Destroy(gameObject);
         }
