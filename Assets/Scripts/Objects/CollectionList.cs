@@ -13,14 +13,6 @@ public class CollectionList : MonoBehaviour
 
     private Dictionary<int, CollectibleObject> collectibleObjects = new Dictionary<int, CollectibleObject>();
 
-    public void Load(List<CollectiblePackage> packages)
-    {
-        for (int i = 0; i < packages.Count; i++)
-        {
-            AddNewCollectibleObject(packages[i]);
-        }
-    }
-
     public void AddItem(CollectiblePackage package)
     {
         AddNewCollectibleObject(package);

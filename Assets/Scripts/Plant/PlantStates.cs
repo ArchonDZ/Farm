@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public abstract class PlantState
@@ -14,23 +15,29 @@ public abstract class PlantState
 
 public class Growth : PlantState
 {
-    private float startGrowthTime;
-    private float endGrowthTime;
-    private float lastThirstTime;
+    private float remainingGrowthTime;
+    private float remainingThirstTime;
 
     public Growth(Plant plant) : base(plant)
     {
-        Recover();
         InitializeGrowth();
+        Recover();
     }
 
     public override void UpdateState()
     {
-        if (Time.time - startGrowthTime > endGrowthTime)
+        remainingThirstTime -= Time.deltaTime;
+        if (remainingThirstTime <= 0)
+        {
+            plant.State = new Thirst(plant, this);
+            return;
+        }
+
+        remainingGrowthTime -= Time.deltaTime;
+        if (remainingGrowthTime <= 0)
         {
             if (plant.PlantItem.Stages.IndexOf(plant.Stage) + 1 <= plant.PlantItem.Stages.Count - 1)
             {
-                startGrowthTime = Time.time;
                 InitializeGrowth();
             }
             else
@@ -38,25 +45,19 @@ public class Growth : PlantState
                 plant.State = new WaitHarvest(plant);
             }
         }
-
-        if (Time.time - lastThirstTime > plant.PlantItem.ThirstTime)
-        {
-            plant.State = new Thirst(plant, this);
-            endGrowthTime -= Time.time - startGrowthTime;
-        }
     }
 
     public void Recover()
     {
-        startGrowthTime = Time.time;
-        lastThirstTime = Time.time;
+        remainingThirstTime = plant.PlantItem.ThirstTimeSpan.Seconds;
     }
 
     private void InitializeGrowth()
     {
         plant.Stage = plant.PlantItem.Stages[plant.PlantItem.Stages.IndexOf(plant.Stage) + 1];
         plant.UpdateSprite(plant.Stage.sprite);
-        endGrowthTime = Random.Range(plant.Stage.timeGrowthMin, plant.Stage.timeGrowthMax);
+        TimeSpan endGrowthTime = new TimeSpan(plant.Stage.timeGrowth.Days, plant.Stage.timeGrowth.Hours, plant.Stage.timeGrowth.Minutes, plant.Stage.timeGrowth.Seconds);
+        remainingGrowthTime = endGrowthTime.Seconds;
     }
 }
 

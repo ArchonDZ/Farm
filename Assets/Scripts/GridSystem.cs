@@ -14,20 +14,30 @@ public class GridSystem : MonoBehaviour
     public GridLayout GridLayout => gridLayout;
 
     #region Building
-    public GameObject InitiazeObjectOnPosition(GameObject build, Vector3 position)
+    public GameObject InitializeObjectOnCellPosition(GameObject build, Vector3 position)
     {
         position.z = 0;
         Vector3Int cellPos = gridLayout.WorldToCell(position);
         Vector3 pos = gridLayout.CellToLocalInterpolated(cellPos) + Vector3.up * gridLayout.cellSize.y / 2f;
-        return diContainer.InstantiatePrefab(build, pos, Quaternion.identity, null);
+        return InitializeObjectOnPosition(build, pos);
     }
 
-    public T InitiazeObjectOnPosition<T>(T build, Vector3 position) where T : Object
+    public GameObject InitializeObjectOnPosition(GameObject build, Vector3 position)
+    {
+        return diContainer.InstantiatePrefab(build, position, Quaternion.identity, null);
+    }
+
+    public T InitializeObjectOnCellPosition<T>(T build, Vector3 position) where T : Object
     {
         position.z = 0;
         Vector3Int cellPos = gridLayout.WorldToCell(position);
         Vector3 pos = gridLayout.CellToLocalInterpolated(cellPos) + Vector3.up * gridLayout.cellSize.y / 2f;
-        return diContainer.InstantiatePrefabForComponent<T>(build, pos, Quaternion.identity, null);
+        return InitializeObjectOnPosition(build, pos);
+    }
+
+    public T InitializeObjectOnPosition<T>(T build, Vector3 position) where T : Object
+    {
+        return diContainer.InstantiatePrefabForComponent<T>(build, position, Quaternion.identity, null);
     }
     #endregion
 

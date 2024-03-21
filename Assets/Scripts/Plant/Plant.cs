@@ -5,8 +5,7 @@ using Zenject;
 [Serializable]
 public struct PlantStage
 {
-    public float timeGrowthMin;
-    public float timeGrowthMax;
+    public TimePeriod timeGrowth;
     public Sprite sprite;
 }
 

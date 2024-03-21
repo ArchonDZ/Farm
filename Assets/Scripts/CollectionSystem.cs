@@ -11,11 +11,14 @@ public class CollectionSystem : MonoBehaviour
     private List<CollectibleData> collectibleDataList;
     private List<CollectibleItem> collectibleItemList;
 
-    private List<CollectiblePackage> collectiblePackageSeed = new List<CollectiblePackage>();
-
     void Awake()
     {
         Load();
+    }
+
+    void OnDisable()
+    {
+        Save();
     }
 
     public void AddDrops(List<Drop> drops)
@@ -69,19 +72,8 @@ public class CollectionSystem : MonoBehaviour
             int collectibleItemIndex = collectibleItemList.FindIndex(x => x.Id == collectibleDataList[i].Id);
             if (collectibleItemIndex != -1)
             {
-                GetPackagesListByType(collectibleItemList[collectibleItemIndex].ItemType)?.Add(new CollectiblePackage(collectibleDataList[i], collectibleItemList[collectibleItemIndex]));
+                GetCollectionListByType(collectibleItemList[collectibleItemIndex].ItemType)?.AddItem(new CollectiblePackage(collectibleDataList[i], collectibleItemList[collectibleItemIndex]));
             }
         }
-        collectionListSeed.Load(collectiblePackageSeed);
-        collectiblePackageSeed.Clear();
-    }
-
-    private List<CollectiblePackage> GetPackagesListByType(ItemType itemType)
-    {
-        return itemType switch
-        {
-            ItemType.Seed => collectiblePackageSeed,
-            _ => null
-        };
     }
 }
