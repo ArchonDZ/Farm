@@ -15,18 +15,13 @@ public class CollectionList : MonoBehaviour
 
     public void AddItem(CollectiblePackage package)
     {
-        AddNewCollectibleObject(package);
+        CollectibleObject collectibleObject = diContainer.InstantiatePrefabForComponent<CollectibleObject>(prefabCollectibleObject, parent);
+        collectibleObject.Initialize(package, sidePanel);
+        collectibleObjects.Add(package.CollectibleItem.Id, collectibleObject);
     }
 
     public void UpdateObject(int id)
     {
         collectibleObjects[id].UpdateObject();
-    }
-
-    private void AddNewCollectibleObject(CollectiblePackage package)
-    {
-        CollectibleObject collectibleObject = diContainer.InstantiatePrefabForComponent<CollectibleObject>(prefabCollectibleObject, parent);
-        collectibleObject.Initialize(package, sidePanel);
-        collectibleObjects.Add(package.CollectibleItem.Id, collectibleObject);
     }
 }

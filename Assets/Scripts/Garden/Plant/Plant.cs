@@ -19,6 +19,7 @@ public class Plant : InitializableObject
 
     private PlantItem plantItem;
     private PlantState state;
+    private PlacebleData placebleData;
 
     public PlantStage Stage { get; set; }
     public PlantState State { get => state; set { state = value; stateIndicator.UpdateState(value); } }
@@ -29,19 +30,32 @@ public class Plant : InitializableObject
         placebleObject.Place();
     }
 
-    void Start()
-    {
-        State = new Growth(this);
-    }
-
     void Update()
     {
         State.UpdateState();
     }
 
-    public override void Initialize(InitializableItem initializableItem)
+    void OnApplicationQuit()
+    {
+        if (placebleData == null)
+        {
+            placebleData = new PlantPlacebleData(plantItem.Id, transform.position, State);
+            collectionSystem.AddPlaceble(placebleData);
+        }
+    }
+
+    public override void Initialize(InitializableItem initializableItem, PlacebleData placebleData)
     {
         plantItem = initializableItem as PlantItem;
+        if (placebleData == null)
+        {
+            State = new Growth(this);
+        }
+        else
+        {
+            this.placebleData = placebleData;
+            State = (placebleData as PlantPlacebleData)?.State;
+        }
     }
 
     public void UpdateSprite(Sprite sprite)

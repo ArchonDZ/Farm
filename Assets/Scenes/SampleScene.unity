@@ -815,9 +815,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b66527bd1b96c3d4dbb4f647184add59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSystem: {fileID: 1645397749}
   gameArea: {fileID: 1216778032}
+  gridSystem: {fileID: 1645397749}
   collectionSystem: {fileID: 915060912}
+  placementLoader: {fileID: 0}
   placementHelper: {fileID: 671881798865501117}
 --- !u!1 &914789129
 GameObject:
@@ -914,6 +915,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectionListSeed: {fileID: 1890394539}
+  placementLoaderPlant: {fileID: 0}
 --- !u!4 &915060913
 Transform:
   m_ObjectHideFlags: 0

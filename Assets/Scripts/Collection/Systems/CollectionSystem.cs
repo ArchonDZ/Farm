@@ -2,6 +2,7 @@ using BayatGames.SaveGameFree;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Zenject;
 
 public class CollectionSystem : MonoBehaviour
 {
@@ -9,7 +10,11 @@ public class CollectionSystem : MonoBehaviour
     [SerializeField] private CollectionList collectionListSeed;
 
     private List<CollectibleData> collectibleDataList;
+    private List<PlacebleData> placebleDataList;
     private List<CollectibleItem> collectibleItemList;
+    private List<InitializableItem> initializableItemList;
+
+    [Inject] private GridSystem gridSystem;
 
     void Awake()
     {
@@ -40,30 +45,40 @@ public class CollectionSystem : MonoBehaviour
         }
     }
 
+    public void AddPlaceble(PlacebleData placebleData)
+    {
+        placebleDataList.Add(placebleData);
+    }
+
     [ContextMenu("Load")]
     private void Load()
     {
-        collectibleDataList = SaveGame.Load<List<CollectibleData>>("save_collectible.dat", true, "FarmOfDmitryZinovsky");
-        collectibleItemList = Resources.LoadAll<CollectibleItem>("CollectibleItems").ToList();
-        InitializeLists();
+        LoadData();
+        LoadResources();
+        InitializeCollectionLists();
+        InitializePlacebleObjects();
     }
 
     [ContextMenu("Save")]
     private void Save()
     {
         SaveGame.Save("save_collectible.dat", collectibleDataList, true);
+        SaveGame.Save("save_placeble.dat", placebleDataList, true);
     }
 
-    private CollectionList GetCollectionListByType(ItemType itemType)
+    private void LoadData()
     {
-        return itemType switch
-        {
-            ItemType.Seed => collectionListSeed,
-            _ => null
-        };
+        collectibleDataList = SaveGame.Load<List<CollectibleData>>("save_collectible.dat", true, "FarmOfDmitryZinovsky");
+        placebleDataList = SaveGame.Load<List<PlacebleData>>("save_placeble.dat", true, "FarmOfDmitryZinovsky");
     }
 
-    private void InitializeLists()
+    private void LoadResources()
+    {
+        collectibleItemList = Resources.LoadAll<CollectibleItem>("CollectibleItems").ToList();
+        initializableItemList = Resources.LoadAll<InitializableItem>("InitializableItems").ToList();
+    }
+
+    private void InitializeCollectionLists()
     {
         collectibleDataList ??= new List<CollectibleData>() { new CollectibleData(1, 3) };
 
@@ -75,5 +90,32 @@ public class CollectionSystem : MonoBehaviour
                 GetCollectionListByType(collectibleItemList[collectibleItemIndex].ItemType)?.AddItem(new CollectiblePackage(collectibleDataList[i], collectibleItemList[collectibleItemIndex]));
             }
         }
+    }
+
+    private void InitializePlacebleObjects()
+    {
+        placebleDataList ??= new List<PlacebleData>();
+
+        for (int i = 0; i < placebleDataList.Count; i++)
+        {
+            int initializebleItemIndex = initializableItemList.FindIndex(x => x.Id == placebleDataList[i].Id);
+            if (initializebleItemIndex != -1)
+            {
+                if (placebleDataList[i] is PlantPlacebleData plantPlacebleData)
+                {
+                    (gridSystem.InitializeObjectOnCellPosition(initializableItemList[initializebleItemIndex].InitializableObject, placebleDataList[i].Position) as Plant)?
+                        .Initialize(initializableItemList[initializebleItemIndex], plantPlacebleData);
+                }
+            }
+        }
+    }
+
+    private CollectionList GetCollectionListByType(ItemType itemType)
+    {
+        return itemType switch
+        {
+            ItemType.Seed => collectionListSeed,
+            _ => null
+        };
     }
 }

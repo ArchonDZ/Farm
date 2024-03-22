@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+[Serializable]
 public abstract class PlantState
 {
     protected Plant plant;
@@ -13,6 +14,7 @@ public abstract class PlantState
     public abstract void UpdateState();
 }
 
+[Serializable]
 public class Growth : PlantState
 {
     private float remainingGrowthTime;
@@ -61,6 +63,7 @@ public class Growth : PlantState
     }
 }
 
+[Serializable]
 public class Thirst : PlantState
 {
     private readonly Growth lastStateGrowth;
@@ -79,6 +82,7 @@ public class Thirst : PlantState
     }
 }
 
+[Serializable]
 public class WaitHarvest : PlantState
 {
     public WaitHarvest(Plant plant) : base(plant) { }

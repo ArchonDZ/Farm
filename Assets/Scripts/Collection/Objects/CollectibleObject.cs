@@ -58,7 +58,7 @@ public class CollectibleObject : MonoBehaviour
     {
         collectiblePackage.CollectibleData.Count--;
         UpdateObject();
-        gridSystem.InitializeObjectOnCellPosition(collectiblePackage.CollectibleItem.InitializableObject, Camera.main.ScreenToWorldPoint(Input.mousePosition))
-            .Initialize(collectiblePackage.CollectibleItem.InitializableItem);
+        gridSystem.InitializeObjectOnCellPosition(collectiblePackage.CollectibleItem.InitializableItem.InitializableObject, Camera.main.ScreenToWorldPoint(Input.mousePosition))
+            .Initialize(collectiblePackage.CollectibleItem.InitializableItem, null);
     }
 }

@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d199464cbadc30449a6bfc6a03bace8, type: 3}
   m_Name: MysteryPlant
   m_EditorClassIdentifier: 
+  InitializableObject: {fileID: 3216736138069626618, guid: 03d44521cd4ea954eac7344b1e0fbb51, type: 3}
+  Id: 1
+  HarvestSprite: {fileID: 0}
   ThirstTime:
     Days: 0
     Hours: 0
     Minutes: 0
     Seconds: 5
-  HarvestSprite: {fileID: 0}
   Stages:
   - timeGrowth:
       Days: 0
