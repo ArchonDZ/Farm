@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Zenject;
 
-public class PlacebleObject : MonoBehaviour
+public class PlaceableObject : MonoBehaviour
 {
     public event Action OnPlaceEvent;
 

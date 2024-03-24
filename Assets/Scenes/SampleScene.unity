@@ -818,7 +818,6 @@ MonoBehaviour:
   gameArea: {fileID: 1216778032}
   gridSystem: {fileID: 1645397749}
   collectionSystem: {fileID: 915060912}
-  placementLoader: {fileID: 0}
   placementHelper: {fileID: 671881798865501117}
 --- !u!1 &914789129
 GameObject:
@@ -915,7 +914,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectionListSeed: {fileID: 1890394539}
-  placementLoaderPlant: {fileID: 0}
 --- !u!4 &915060913
 Transform:
   m_ObjectHideFlags: 0
@@ -3610,7 +3608,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 6889545899532599492}
-  placebleObject: {fileID: 6184739360703105349}
+  placeableObject: {fileID: 6184739360703105349}
 --- !u!4 &1930709361719180647
 Transform:
   m_ObjectHideFlags: 0

@@ -11,14 +11,19 @@ public abstract class PlantState
         this.plant = plant;
     }
 
+    public virtual void Initialize(Plant plant)
+    {
+        this.plant = plant;
+    }
+
     public abstract void UpdateState();
 }
 
 [Serializable]
 public class Growth : PlantState
 {
-    private float remainingGrowthTime;
-    private float remainingThirstTime;
+    [SerializeField] private float remainingGrowthTime;
+    [SerializeField] private float remainingThirstTime;
 
     public Growth(Plant plant) : base(plant)
     {
@@ -66,11 +71,17 @@ public class Growth : PlantState
 [Serializable]
 public class Thirst : PlantState
 {
-    private readonly Growth lastStateGrowth;
+    [SerializeField] private readonly Growth lastStateGrowth;
 
     public Thirst(Plant plant, Growth growth) : base(plant)
     {
         lastStateGrowth = growth;
+    }
+
+    public override void Initialize(Plant plant)
+    {
+        base.Initialize(plant);
+        lastStateGrowth.Initialize(plant);
     }
 
     public override void UpdateState() { }
@@ -87,8 +98,5 @@ public class WaitHarvest : PlantState
 {
     public WaitHarvest(Plant plant) : base(plant) { }
 
-    public override void UpdateState()
-    {
-        plant.UpdateSprite(plant.PlantItem.HarvestSprite);
-    }
+    public override void UpdateState() { }
 }

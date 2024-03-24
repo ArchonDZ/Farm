@@ -3,12 +3,12 @@ using System;
 [Serializable]
 public class InitializeblePackage
 {
-    public PlacebleData PlacebleData;
+    public PlaceableData PlaceableData;
     public InitializableItem InitializableItem;
 
-    public InitializeblePackage(PlacebleData placebleData, InitializableItem initializableItem)
+    public InitializeblePackage(PlaceableData placeableData, InitializableItem initializableItem)
     {
-        PlacebleData = placebleData;
+        PlaceableData = placeableData;
         InitializableItem = initializableItem;
     }
 }

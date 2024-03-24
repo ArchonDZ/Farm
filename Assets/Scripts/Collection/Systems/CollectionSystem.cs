@@ -10,7 +10,7 @@ public class CollectionSystem : MonoBehaviour
     [SerializeField] private CollectionList collectionListSeed;
 
     private List<CollectibleData> collectibleDataList;
-    private List<PlacebleData> placebleDataList;
+    private List<PlaceableData> placeableDataList;
     private List<CollectibleItem> collectibleItemList;
     private List<InitializableItem> initializableItemList;
 
@@ -45,9 +45,15 @@ public class CollectionSystem : MonoBehaviour
         }
     }
 
-    public void AddPlaceble(PlacebleData placebleData)
+    public void AddPlaceable(PlaceableData placeableData)
     {
-        placebleDataList.Add(placebleData);
+        placeableDataList.Add(placeableData);
+    }
+
+    public void RemovePlaceable(PlaceableData placeableData)
+    {
+        if (placeableDataList.Contains(placeableData))
+            placeableDataList.Remove(placeableData);
     }
 
     [ContextMenu("Load")]
@@ -56,20 +62,20 @@ public class CollectionSystem : MonoBehaviour
         LoadData();
         LoadResources();
         InitializeCollectionLists();
-        InitializePlacebleObjects();
+        InitializePlaceableObjects();
     }
 
     [ContextMenu("Save")]
     private void Save()
     {
-        SaveGame.Save("save_collectible.dat", collectibleDataList, true);
-        SaveGame.Save("save_placeble.dat", placebleDataList, true);
+        SaveGame.Save("save_collectible.dat", collectibleDataList);
+        SaveGame.Save("save_placeable.dat", placeableDataList);
     }
 
     private void LoadData()
     {
-        collectibleDataList = SaveGame.Load<List<CollectibleData>>("save_collectible.dat", true, "FarmOfDmitryZinovsky");
-        placebleDataList = SaveGame.Load<List<PlacebleData>>("save_placeble.dat", true, "FarmOfDmitryZinovsky");
+        collectibleDataList = SaveGame.Load<List<CollectibleData>>("save_collectible.dat", false, "FarmOfDmitryZinovsky");
+        placeableDataList = SaveGame.Load<List<PlaceableData>>("save_placeable.dat", false, "FarmOfDmitryZinovsky");
     }
 
     private void LoadResources()
@@ -92,19 +98,19 @@ public class CollectionSystem : MonoBehaviour
         }
     }
 
-    private void InitializePlacebleObjects()
+    private void InitializePlaceableObjects()
     {
-        placebleDataList ??= new List<PlacebleData>();
+        placeableDataList ??= new List<PlaceableData>();
 
-        for (int i = 0; i < placebleDataList.Count; i++)
+        for (int i = 0; i < placeableDataList.Count; i++)
         {
-            int initializebleItemIndex = initializableItemList.FindIndex(x => x.Id == placebleDataList[i].Id);
+            int initializebleItemIndex = initializableItemList.FindIndex(x => x.Id == placeableDataList[i].Id);
             if (initializebleItemIndex != -1)
             {
-                if (placebleDataList[i] is PlantPlacebleData plantPlacebleData)
+                if (placeableDataList[i] is PlantPlaceableData plantPlaceableData)
                 {
-                    (gridSystem.InitializeObjectOnCellPosition(initializableItemList[initializebleItemIndex].InitializableObject, placebleDataList[i].Position) as Plant)?
-                        .Initialize(initializableItemList[initializebleItemIndex], plantPlacebleData);
+                    (gridSystem.InitializeObjectOnCellPosition(initializableItemList[initializebleItemIndex].InitializableObject, placeableDataList[i].Position) as Plant)?
+                        .Initialize(initializableItemList[initializebleItemIndex], plantPlaceableData);
                 }
             }
         }

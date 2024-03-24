@@ -12,14 +12,14 @@ public struct PlantStage
 public class Plant : InitializableObject
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
-    [SerializeField] private PlacebleObject placebleObject;
+    [SerializeField] private PlaceableObject placeableObject;
     [SerializeField] private PlantStateIndicator stateIndicator;
 
     [Inject] CollectionSystem collectionSystem;
 
     private PlantItem plantItem;
     private PlantState state;
-    private PlacebleData placebleData;
+    private PlantPlaceableData placeableData;
 
     public PlantStage Stage { get; set; }
     public PlantState State { get => state; set { state = value; stateIndicator.UpdateState(value); } }
@@ -27,7 +27,7 @@ public class Plant : InitializableObject
 
     void Awake()
     {
-        placebleObject.Place();
+        placeableObject.Place();
     }
 
     void Update()
@@ -37,24 +37,32 @@ public class Plant : InitializableObject
 
     void OnApplicationQuit()
     {
-        if (placebleData == null)
+        if (placeableData == null)
         {
-            placebleData = new PlantPlacebleData(plantItem.Id, transform.position, State);
-            collectionSystem.AddPlaceble(placebleData);
+            placeableData = new PlantPlaceableData(plantItem.Id, transform.position, plantItem.Stages.IndexOf(Stage), State);
+            collectionSystem.AddPlaceable(placeableData);
+        }
+        else
+        {
+            placeableData.State = State;
+            placeableData.Stage = plantItem.Stages.IndexOf(Stage);
         }
     }
 
-    public override void Initialize(InitializableItem initializableItem, PlacebleData placebleData)
+    public override void Initialize(InitializableItem initializableItem, PlaceableData placeableData)
     {
         plantItem = initializableItem as PlantItem;
-        if (placebleData == null)
+        if (placeableData == null)
         {
             State = new Growth(this);
         }
         else
         {
-            this.placebleData = placebleData;
-            State = (placebleData as PlantPlacebleData)?.State;
+            this.placeableData = placeableData as PlantPlaceableData;
+            State = this.placeableData.State;
+            this.placeableData.State.Initialize(this);
+            Stage = plantItem.Stages[this.placeableData.Stage];
+            UpdateSprite(Stage.sprite);
         }
     }
 
@@ -66,8 +74,7 @@ public class Plant : InitializableObject
     public void Dig()
     {
         Debug.Log("Dig");
-        placebleObject.Clear();
-        Destroy(gameObject);
+        Destroy();
     }
 
     public void Irrigate()
@@ -85,8 +92,14 @@ public class Plant : InitializableObject
         if (State is WaitHarvest)
         {
             collectionSystem.AddDrops(plantItem.Drops);
-            placebleObject.Clear();
-            Destroy(gameObject);
+            Destroy();
         }
+    }
+
+    private void Destroy()
+    {
+        collectionSystem.RemovePlaceable(placeableData);
+        placeableObject.Clear();
+        Destroy(gameObject);
     }
 }

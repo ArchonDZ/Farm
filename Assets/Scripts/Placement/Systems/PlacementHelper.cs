@@ -2,13 +2,13 @@ using System;
 using UnityEngine;
 using Zenject;
 
-[RequireComponent(typeof(PlacebleObject))]
+[RequireComponent(typeof(PlaceableObject))]
 public class PlacementHelper : MonoBehaviour
 {
     public event Action OnCanBePlacedEvent;
 
     [SerializeField] private SpriteRenderer spriteRenderer;
-    [SerializeField] private PlacebleObject placebleObject;
+    [SerializeField] private PlaceableObject placeableObject;
 
     [Inject] private GridSystem gridSystem;
 
@@ -31,7 +31,7 @@ public class PlacementHelper : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0))
         {
-            if (placebleObject.CanBePlaced())
+            if (placeableObject.CanBePlaced())
             {
                 OnCanBePlacedEvent?.Invoke();
             }

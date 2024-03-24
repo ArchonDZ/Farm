@@ -251,5 +251,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 1280358116565412579}
-  placebleObject: {fileID: 63547384130703875}
+  placeableObject: {fileID: 63547384130703875}
   stateIndicator: {fileID: 1351465885629950282}

@@ -5,7 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewPlantItem", menuName = "Farm/InitializableItem/PlantItem")]
 public class PlantItem : InitializableItem
 {
-    public Sprite HarvestSprite;
     public TimePeriod ThirstTime;
     public List<PlantStage> Stages = new List<PlantStage>();
     public List<Drop> Drops = new List<Drop>();
