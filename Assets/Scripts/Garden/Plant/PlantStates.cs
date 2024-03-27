@@ -22,6 +22,8 @@ public abstract class PlantState
 [Serializable]
 public class Growth : PlantState
 {
+    [SerializeField] private DateTime timeStartGrowth;
+    [SerializeField] private DateTime timeStartThirst;
     [SerializeField] private float remainingGrowthTime;
     [SerializeField] private float remainingThirstTime;
 
@@ -29,6 +31,17 @@ public class Growth : PlantState
     {
         InitializeGrowth();
         Recover();
+    }
+
+    public override void Initialize(Plant plant)
+    {
+        base.Initialize(plant);
+        RecalculateTime();
+    }
+
+    public void InitializeFromThirst(Plant plant)
+    {
+        base.Initialize(plant);
     }
 
     public override void UpdateState()
@@ -43,28 +56,63 @@ public class Growth : PlantState
         remainingGrowthTime -= Time.deltaTime;
         if (remainingGrowthTime <= 0)
         {
-            if (plant.PlantItem.Stages.IndexOf(plant.Stage) + 1 <= plant.PlantItem.Stages.Count - 1)
-            {
-                InitializeGrowth();
-            }
-            else
-            {
-                plant.State = new WaitHarvest(plant);
-            }
+            InitializeGrowth();
         }
     }
 
     public void Recover()
     {
         remainingThirstTime = plant.PlantItem.ThirstTimeSpan.Seconds;
+        timeStartGrowth = DateTime.Now;
+        timeStartThirst = DateTime.Now;
     }
 
     private void InitializeGrowth()
     {
         plant.Stage = plant.PlantItem.Stages[plant.PlantItem.Stages.IndexOf(plant.Stage) + 1];
-        plant.UpdateSprite(plant.Stage.sprite);
-        TimeSpan endGrowthTime = new TimeSpan(plant.Stage.timeGrowth.Days, plant.Stage.timeGrowth.Hours, plant.Stage.timeGrowth.Minutes, plant.Stage.timeGrowth.Seconds);
-        remainingGrowthTime = endGrowthTime.Seconds;
+        int indexNextStage = plant.PlantItem.Stages.IndexOf(plant.Stage) + 1;
+        if (indexNextStage <= plant.PlantItem.Stages.Count - 1)
+        {
+            PlantStage nextPlantStage = plant.PlantItem.Stages[indexNextStage];
+            TimeSpan endGrowthTime = new TimeSpan(nextPlantStage.timeGrowth.Days, nextPlantStage.timeGrowth.Hours, nextPlantStage.timeGrowth.Minutes, nextPlantStage.timeGrowth.Seconds);
+            remainingGrowthTime = endGrowthTime.Seconds;
+            timeStartGrowth = DateTime.Now;
+        }
+        else
+        {
+            plant.State = new WaitHarvest(plant);
+        }
+    }
+
+    private void RecalculateTime()
+    {
+        DateTime currentTime = DateTime.Now;
+        DateTime thirstEndTime = timeStartThirst.AddSeconds(remainingThirstTime);
+        DateTime growthEndTime = timeStartGrowth;
+
+        for (int i = plant.PlantItem.Stages.IndexOf(plant.Stage); i < plant.PlantItem.Stages.Count - 1; i++)
+        {
+            growthEndTime = growthEndTime.AddSeconds(remainingGrowthTime);
+            if (currentTime < growthEndTime && currentTime < thirstEndTime)
+            {
+                remainingGrowthTime = growthEndTime.Subtract(currentTime).Seconds;
+                remainingThirstTime = thirstEndTime.Subtract(currentTime).Seconds;
+                return;
+            }
+            else
+            {
+                if (thirstEndTime <= growthEndTime)
+                {
+                    remainingGrowthTime = growthEndTime.Subtract(thirstEndTime).Seconds;
+                    plant.State = new Thirst(plant, this);
+                    return;
+                }
+                else
+                {
+                    InitializeGrowth();
+                }
+            }
+        }
     }
 }
 
@@ -81,7 +129,7 @@ public class Thirst : PlantState
     public override void Initialize(Plant plant)
     {
         base.Initialize(plant);
-        lastStateGrowth.Initialize(plant);
+        lastStateGrowth.InitializeFromThirst(plant);
     }
 
     public override void UpdateState() { }

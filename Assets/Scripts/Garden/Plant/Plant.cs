@@ -17,11 +17,12 @@ public class Plant : InitializableObject
 
     [Inject] CollectionSystem collectionSystem;
 
-    private PlantItem plantItem;
+    private PlantStage stage;
     private PlantState state;
+    private PlantItem plantItem;
     private PlantPlaceableData placeableData;
 
-    public PlantStage Stage { get; set; }
+    public PlantStage Stage { get => stage; set { stage = value; UpdateSprite(); } }
     public PlantState State { get => state; set { state = value; stateIndicator.UpdateState(value); } }
     public PlantItem PlantItem => plantItem;
 
@@ -60,26 +61,18 @@ public class Plant : InitializableObject
         {
             this.placeableData = placeableData as PlantPlaceableData;
             State = this.placeableData.State;
-            this.placeableData.State.Initialize(this);
             Stage = plantItem.Stages[this.placeableData.Stage];
-            UpdateSprite(Stage.sprite);
+            this.placeableData.State.Initialize(this);
         }
-    }
-
-    public void UpdateSprite(Sprite sprite)
-    {
-        spriteRenderer.sprite = sprite;
     }
 
     public void Dig()
     {
-        Debug.Log("Dig");
         Destroy();
     }
 
     public void Irrigate()
     {
-        Debug.Log("Irrigate");
         if (State is Thirst thirst)
         {
             thirst.EndState();
@@ -88,7 +81,6 @@ public class Plant : InitializableObject
 
     public void Harvest()
     {
-        Debug.Log("Harvest");
         if (State is WaitHarvest)
         {
             collectionSystem.AddDrops(plantItem.Drops);
@@ -101,5 +93,10 @@ public class Plant : InitializableObject
         collectionSystem.RemovePlaceable(placeableData);
         placeableObject.Clear();
         Destroy(gameObject);
+    }
+
+    private void UpdateSprite()
+    {
+        spriteRenderer.sprite = Stage.sprite;
     }
 }

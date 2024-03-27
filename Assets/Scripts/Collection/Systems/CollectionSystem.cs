@@ -52,8 +52,7 @@ public class CollectionSystem : MonoBehaviour
 
     public void RemovePlaceable(PlaceableData placeableData)
     {
-        if (placeableDataList.Contains(placeableData))
-            placeableDataList.Remove(placeableData);
+        placeableDataList.Remove(placeableData);
     }
 
     [ContextMenu("Load")]

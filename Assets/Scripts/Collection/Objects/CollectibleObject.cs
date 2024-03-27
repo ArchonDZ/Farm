@@ -22,7 +22,7 @@ public class CollectibleObject : MonoBehaviour
 
         iconImage.sprite = collectiblePackage.CollectibleItem.Icon;
         titleText.text = collectiblePackage.CollectibleItem.Name;
-        countText.text = collectiblePackage.CollectibleData.Count.ToString();
+        UpdateObject();
 
         dragable.Initialize(curtainPanel);
         dragable.OnLeftCurtainEvent += Dragable_OnLeftCurtainEvent;
