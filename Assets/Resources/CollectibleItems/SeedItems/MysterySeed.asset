@@ -16,5 +16,4 @@ MonoBehaviour:
   ItemType: 1
   Name: Mystery
   Icon: {fileID: 21300000, guid: f6b0955726bd49c46abdf904db365759, type: 3}
-  InitializableItem: {fileID: 11400000, guid: 86d820a62739b4848806e5b49ed616a9, type: 2}
-  InitializableObject: {fileID: 3216736138069626618, guid: 03d44521cd4ea954eac7344b1e0fbb51, type: 3}
+  InitializableItem: {fileID: 11400000, guid: 2b1331cfdb5bbe545a00fa6c42f0d0b4, type: 2}
