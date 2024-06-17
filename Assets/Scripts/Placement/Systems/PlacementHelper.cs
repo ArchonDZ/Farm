@@ -35,6 +35,7 @@ public class PlacementHelper : MonoBehaviour
             {
                 OnCanBePlacedEvent?.Invoke();
             }
+            OnCanBePlacedEvent = null;
             gameObject.SetActive(false);
         }
     }

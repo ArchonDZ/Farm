@@ -15,6 +15,12 @@ public class CollectibleObject : MonoBehaviour
     [Inject] private PlacementHelper placementHelper;
 
     private CollectiblePackage collectiblePackage;
+    private Camera mainCamera;
+
+    void Start()
+    {
+        mainCamera = Camera.main;
+    }
 
     public void Initialize(CollectiblePackage package, CurtainPanel curtainPanel)
     {
@@ -26,7 +32,6 @@ public class CollectibleObject : MonoBehaviour
 
         dragable.Initialize(curtainPanel);
         dragable.OnLeftCurtainEvent += Dragable_OnLeftCurtainEvent;
-        placementHelper.OnCanBePlacedEvent += Spend;
     }
 
     public void UpdateObject()
@@ -51,6 +56,7 @@ public class CollectibleObject : MonoBehaviour
 
     private void Dragable_OnLeftCurtainEvent()
     {
+        placementHelper.OnCanBePlacedEvent += Spend;
         placementHelper.Activate(collectiblePackage.CollectibleItem.Icon);
     }
 
@@ -58,7 +64,7 @@ public class CollectibleObject : MonoBehaviour
     {
         collectiblePackage.CollectibleData.Count--;
         UpdateObject();
-        gridSystem.InitializeObjectOnCellPosition(collectiblePackage.CollectibleItem.InitializableItem.InitializableObject, Camera.main.ScreenToWorldPoint(Input.mousePosition))
+        gridSystem.InitializeObjectOnCellPosition(collectiblePackage.CollectibleItem.InitializableItem.InitializableObject, mainCamera.ScreenToWorldPoint(Input.mousePosition))
             .Initialize(collectiblePackage.CollectibleItem.InitializableItem, null);
     }
 }

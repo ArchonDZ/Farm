@@ -27,7 +27,7 @@ public class GridSystem : MonoBehaviour
         return diContainer.InstantiatePrefab(build, position, Quaternion.identity, null);
     }
 
-    public T InitializeObjectOnCellPosition<T>(T build, Vector3 position) where T : Object
+    public T InitializeObjectOnCellPosition<T>(T build, Vector3 position) where T : InitializableObject
     {
         position.z = 0;
         Vector3Int cellPos = gridLayout.WorldToCell(position);
@@ -35,7 +35,7 @@ public class GridSystem : MonoBehaviour
         return InitializeObjectOnPosition(build, pos);
     }
 
-    public T InitializeObjectOnPosition<T>(T build, Vector3 position) where T : Object
+    public T InitializeObjectOnPosition<T>(T build, Vector3 position) where T : InitializableObject
     {
         return diContainer.InstantiatePrefabForComponent<T>(build, position, Quaternion.identity, null);
     }
