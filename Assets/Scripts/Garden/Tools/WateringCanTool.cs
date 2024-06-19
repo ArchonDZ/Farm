@@ -1,4 +1,4 @@
-public class WateringCanTool : Tool
+public class WateringCanTool : DragTool
 {
     protected override void Apply(Plant plant)
     {

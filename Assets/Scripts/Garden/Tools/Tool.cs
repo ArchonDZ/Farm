@@ -1,9 +1,8 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-public abstract class Tool : MonoBehaviour, IDropHandler
+public abstract class Tool : MonoBehaviour
 {
-    [SerializeField] private int layerMaskPlant;
+    [SerializeField] private int layerMaskPlant = 6;
 
     private Camera mainCamera;
 
@@ -12,7 +11,7 @@ public abstract class Tool : MonoBehaviour, IDropHandler
         mainCamera = Camera.main;
     }
 
-    public void OnDrop(PointerEventData eventData)
+    protected void RaycastTool()
     {
         Vector2 dragPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(dragPos, Vector2.zero, float.PositiveInfinity, 1 << layerMaskPlant);

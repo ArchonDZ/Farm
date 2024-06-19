@@ -1,4 +1,4 @@
-public class ScytheTool : Tool
+public class ScytheTool : DragTool
 {
     protected override void Apply(Plant plant)
     {

@@ -1,4 +1,4 @@
-public class ShovelTool : Tool
+public class ShovelTool : DropTool
 {
     protected override void Apply(Plant plant)
     {
