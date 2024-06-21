@@ -1,16 +1,14 @@
 using System;
 using UnityEngine;
-using Zenject;
 
 [RequireComponent(typeof(PlaceableObject))]
 public class PlacementHelper : MonoBehaviour
 {
     public event Action OnCanBePlacedEvent;
 
+    [SerializeField, Min(1)] private int intervalCheck = 5;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private PlaceableObject placeableObject;
-
-    [Inject] private GridSystem gridSystem;
 
     private Camera mainCamera;
 
@@ -21,22 +19,22 @@ public class PlacementHelper : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetMouseButtonUp(0))
+        {
+            Deactivate();
+            return;
+        }
+
         Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
-        Vector3Int cellPos = gridSystem.GridLayout.WorldToCell(mousePos);
-        transform.position = gridSystem.GridLayout.CellToLocalInterpolated(cellPos) + Vector3.up * gridSystem.GridLayout.cellSize.y / 2f;
-    }
+        transform.position = mousePos;
 
-    void LateUpdate()
-    {
-        if (Input.GetMouseButtonUp(0))
+        if (Time.frameCount % intervalCheck == 0)
         {
             if (placeableObject.CanBePlaced())
             {
                 OnCanBePlacedEvent?.Invoke();
             }
-            OnCanBePlacedEvent = null;
-            gameObject.SetActive(false);
         }
     }
 
@@ -44,5 +42,11 @@ public class PlacementHelper : MonoBehaviour
     {
         spriteRenderer.sprite = sprite;
         gameObject.SetActive(true);
+    }
+
+    public void Deactivate()
+    {
+        OnCanBePlacedEvent = null;
+        gameObject.SetActive(false);
     }
 }

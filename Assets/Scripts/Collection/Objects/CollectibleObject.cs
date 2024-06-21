@@ -62,9 +62,17 @@ public class CollectibleObject : MonoBehaviour
 
     private void Spend()
     {
-        collectiblePackage.CollectibleData.Count--;
-        UpdateObject();
-        gridSystem.InitializeObjectOnCellPosition(collectiblePackage.CollectibleItem.InitializableItem.InitializableObject, mainCamera.ScreenToWorldPoint(Input.mousePosition))
-            .Initialize(collectiblePackage.CollectibleItem.InitializableItem, null);
+        if (collectiblePackage.CollectibleData.Count > 0)
+        {
+            collectiblePackage.CollectibleData.Count--;
+            UpdateObject();
+            gridSystem.InitializeObjectOnCellPosition(collectiblePackage.CollectibleItem.InitializableItem.InitializableObject, mainCamera.ScreenToWorldPoint(Input.mousePosition))
+                .Initialize(collectiblePackage.CollectibleItem.InitializableItem, null);
+
+            if (collectiblePackage.CollectibleData.Count == 0)
+            {
+                placementHelper.Deactivate();
+            }
+        }
     }
 }
