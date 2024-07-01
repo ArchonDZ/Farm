@@ -6,6 +6,7 @@ public class PlantStateIndicator : MonoBehaviour
 
     [Header("StateSprites")]
     [SerializeField] private Sprite spriteThirst;
+    [SerializeField] private Sprite spritePest;
     [SerializeField] private Sprite spriteHarvest;
 
     public void UpdateState(PlantState plantState)
@@ -13,6 +14,7 @@ public class PlantStateIndicator : MonoBehaviour
         spriteRenderer.sprite = plantState switch
         {
             Thirst => spriteThirst,
+            Pest => spritePest,
             WaitHarvest => spriteHarvest,
             _ => null
         };

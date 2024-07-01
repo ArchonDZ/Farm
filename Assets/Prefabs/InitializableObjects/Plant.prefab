@@ -99,6 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 4228750399055001519}
   spriteThirst: {fileID: 21300000, guid: 3982448fbfc85fe41bb904c74c9676b4, type: 3}
+  spritePest: {fileID: 21300000, guid: 1f4acb66e98b3f948aea20ad95d4e98b, type: 3}
   spriteHarvest: {fileID: 21300000, guid: be2201f6939bcff4383167415a4e1025, type: 3}
 --- !u!1 &4611049578492767100
 GameObject:

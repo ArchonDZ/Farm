@@ -23,14 +23,18 @@ public abstract class PlantState
 public class Growth : PlantState
 {
     [SerializeField] private DateTime timeStartGrowth;
+    [SerializeField] private DateTime timeStartPest;
     [SerializeField] private DateTime timeStartThirst;
-    [SerializeField] private float remainingGrowthTime;
-    [SerializeField] private float remainingThirstTime;
+    [SerializeField] private double remainingGrowthTime;
+    [SerializeField] private double remainingPestTime;
+    [SerializeField] private double remainingThirstTime;
 
     public Growth(Plant plant) : base(plant)
     {
         InitializeGrowth();
-        Recover();
+        RecoverThirst();
+        RecoverPest();
+        RecoverTimers();
     }
 
     public override void Initialize(Plant plant)
@@ -39,13 +43,24 @@ public class Growth : PlantState
         RecalculateTime();
     }
 
-    public void InitializeFromThirst(Plant plant)
+    public void InitializeFromState(Plant plant)
     {
         base.Initialize(plant);
     }
 
     public override void UpdateState()
     {
+        remainingPestTime -= Time.deltaTime;
+        if (remainingPestTime <= 0)
+        {
+            if (ChanceOfPest())
+            {
+                plant.State = new Pest(plant, this);
+                return;
+            }
+            RecoverPest();
+        }
+
         remainingThirstTime -= Time.deltaTime;
         if (remainingThirstTime <= 0)
         {
@@ -60,11 +75,26 @@ public class Growth : PlantState
         }
     }
 
-    public void Recover()
+    public void RecoverThirst()
     {
-        remainingThirstTime = plant.PlantItem.ThirstTimeSpan.Seconds;
+        remainingThirstTime = plant.PlantItem.ThirstTimeSpan.TotalSeconds;
+    }
+
+    public void RecoverPest()
+    {
+        remainingPestTime = plant.PlantItem.PestTimeSpan.TotalSeconds;
+    }
+
+    public void RecoverTimers()
+    {
         timeStartGrowth = DateTime.Now;
+        timeStartPest = DateTime.Now;
         timeStartThirst = DateTime.Now;
+    }
+
+    private bool ChanceOfPest()
+    {
+        return UnityEngine.Random.Range(1, 101) <= plant.PlantItem.chanceOfPest;
     }
 
     private void InitializeGrowth()
@@ -75,7 +105,7 @@ public class Growth : PlantState
         {
             PlantStage nextPlantStage = plant.PlantItem.Stages[indexNextStage];
             TimeSpan endGrowthTime = new TimeSpan(nextPlantStage.timeGrowth.Days, nextPlantStage.timeGrowth.Hours, nextPlantStage.timeGrowth.Minutes, nextPlantStage.timeGrowth.Seconds);
-            remainingGrowthTime = endGrowthTime.Seconds;
+            remainingGrowthTime = endGrowthTime.TotalSeconds;
             timeStartGrowth = DateTime.Now;
         }
         else
@@ -87,32 +117,60 @@ public class Growth : PlantState
     private void RecalculateTime()
     {
         DateTime currentTime = DateTime.Now;
+        DateTime pestEndTime = timeStartPest.AddSeconds(remainingPestTime);
         DateTime thirstEndTime = timeStartThirst.AddSeconds(remainingThirstTime);
         DateTime growthEndTime = timeStartGrowth;
 
         for (int i = plant.PlantItem.Stages.IndexOf(plant.Stage); i < plant.PlantItem.Stages.Count - 1; i++)
         {
             growthEndTime = growthEndTime.AddSeconds(remainingGrowthTime);
-            if (currentTime < growthEndTime && currentTime < thirstEndTime)
+
+            remainingGrowthTime = growthEndTime.Subtract(currentTime).TotalSeconds;
+            remainingPestTime = pestEndTime.Subtract(currentTime).TotalSeconds;
+            remainingThirstTime = thirstEndTime.Subtract(currentTime).TotalSeconds;
+
+            if (remainingPestTime <= 0 && remainingPestTime <= remainingThirstTime && remainingPestTime <= remainingGrowthTime && ChanceOfPest())
             {
-                remainingGrowthTime = growthEndTime.Subtract(currentTime).Seconds;
-                remainingThirstTime = thirstEndTime.Subtract(currentTime).Seconds;
-                return;
+                plant.State = new Pest(plant, this);
+                break;
             }
-            else
+            else if (remainingThirstTime <= 0 && remainingThirstTime <= remainingGrowthTime)
             {
-                if (thirstEndTime <= growthEndTime)
-                {
-                    remainingGrowthTime = growthEndTime.Subtract(thirstEndTime).Seconds;
-                    plant.State = new Thirst(plant, this);
-                    return;
-                }
-                else
-                {
-                    InitializeGrowth();
-                }
+                plant.State = new Thirst(plant, this);
+                break;
+            }
+            else if (remainingGrowthTime <= 0)
+            {
+                InitializeGrowth();
+                break;
             }
         }
+    }
+}
+
+[Serializable]
+public class Pest : PlantState
+{
+    [SerializeField] private readonly Growth lastStateGrowth;
+
+    public Pest(Plant plant, Growth growth) : base(plant)
+    {
+        lastStateGrowth = growth;
+    }
+
+    public override void Initialize(Plant plant)
+    {
+        base.Initialize(plant);
+        lastStateGrowth.InitializeFromState(plant);
+    }
+
+    public override void UpdateState() { }
+
+    public void EndState()
+    {
+        lastStateGrowth.RecoverPest();
+        lastStateGrowth.RecoverTimers();
+        plant.State = lastStateGrowth;
     }
 }
 
@@ -129,14 +187,15 @@ public class Thirst : PlantState
     public override void Initialize(Plant plant)
     {
         base.Initialize(plant);
-        lastStateGrowth.InitializeFromThirst(plant);
+        lastStateGrowth.InitializeFromState(plant);
     }
 
     public override void UpdateState() { }
 
     public void EndState()
     {
-        lastStateGrowth.Recover();
+        lastStateGrowth.RecoverThirst();
+        lastStateGrowth.RecoverTimers();
         plant.State = lastStateGrowth;
     }
 }

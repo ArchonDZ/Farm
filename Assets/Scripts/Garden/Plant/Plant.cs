@@ -79,6 +79,14 @@ public class Plant : InitializableObject
         }
     }
 
+    public void Spray()
+    {
+        if (State is Pest pest)
+        {
+            pest.EndState();
+        }
+    }
+
     public void Harvest()
     {
         if (State is WaitHarvest)
