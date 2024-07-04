@@ -91,7 +91,7 @@ public class Plant : InitializableObject
     {
         if (State is WaitHarvest)
         {
-            collectionSystem.AddDrops(plantItem.Drops);
+            collectionSystem.AddDrops(plantItem.DefinitelyDrops);
             Destroy();
         }
     }

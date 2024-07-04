@@ -9,7 +9,9 @@ public class PlantItem : InitializableItem
     public TimePeriod PestTime;
     public TimePeriod ThirstTime;
     public List<PlantStage> Stages = new List<PlantStage>();
-    public List<Drop> Drops = new List<Drop>();
+    public List<Drop> DefinitelyDrops = new List<Drop>();
+    public int countRandomDrop;
+    public WeightedList<Drop> RandomDrop = new WeightedList<Drop>();
 
     public TimeSpan ThirstTimeSpan;
     public TimeSpan PestTimeSpan;
