@@ -30,18 +30,23 @@ public class CollectionSystem : MonoBehaviour
     {
         for (int i = 0; i < drops.Count; i++)
         {
-            int collectibleDataIndex = collectibleDataList.FindIndex(x => x.Id == drops[i].CollectibleItem.Id);
-            if (collectibleDataIndex != -1)
-            {
-                collectibleDataList[collectibleDataIndex].Count += drops[i].Count;
-                GetCollectionListByType(drops[i].CollectibleItem.ItemType)?.UpdateObject(drops[i].CollectibleItem.Id);
-            }
-            else
-            {
-                CollectibleData data = new CollectibleData(drops[i].CollectibleItem.Id, drops[i].Count);
-                collectibleDataList.Add(data);
-                GetCollectionListByType(drops[i].CollectibleItem.ItemType)?.AddItem(new CollectiblePackage(data, drops[i].CollectibleItem));
-            }
+            AddDrop(drops[i]);
+        }
+    }
+
+    public void AddDrop(Drop drop)
+    {
+        int collectibleDataIndex = collectibleDataList.FindIndex(x => x.Id == drop.CollectibleItem.Id);
+        if (collectibleDataIndex != -1)
+        {
+            collectibleDataList[collectibleDataIndex].Count += drop.Count;
+            GetCollectionListByType(drop.CollectibleItem.ItemType)?.UpdateObject(drop.CollectibleItem.Id);
+        }
+        else
+        {
+            CollectibleData data = new CollectibleData(drop.CollectibleItem.Id, drop.Count);
+            collectibleDataList.Add(data);
+            GetCollectionListByType(drop.CollectibleItem.ItemType)?.AddItem(new CollectiblePackage(data, drop.CollectibleItem));
         }
     }
 

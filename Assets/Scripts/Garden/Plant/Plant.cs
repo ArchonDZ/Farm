@@ -92,6 +92,10 @@ public class Plant : InitializableObject
         if (State is WaitHarvest)
         {
             collectionSystem.AddDrops(plantItem.DefinitelyDrops);
+            for (int i = 0; i < plantItem.countRandomDrop; i++)
+            {
+                collectionSystem.AddDrop(plantItem.RandomDrop.GetRandomValue());
+            }
             Destroy();
         }
     }
