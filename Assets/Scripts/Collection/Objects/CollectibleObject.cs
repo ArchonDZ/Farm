@@ -11,16 +11,11 @@ public class CollectibleObject : MonoBehaviour
     [SerializeField] private TextMeshProUGUI countText;
     [SerializeField] private Image iconImage;
 
-    [Inject] private GridSystem gridSystem;
     [Inject] private PlacementHelper placementHelper;
 
     private CollectiblePackage collectiblePackage;
-    private Camera mainCamera;
 
-    void Start()
-    {
-        mainCamera = Camera.main;
-    }
+    public CollectiblePackage CollectiblePackage => collectiblePackage;
 
     public void Initialize(CollectiblePackage package, CurtainPanel curtainPanel)
     {
@@ -54,25 +49,22 @@ public class CollectibleObject : MonoBehaviour
         }
     }
 
-    private void Dragable_OnLeftCurtainEvent()
-    {
-        placementHelper.OnCanBePlacedEvent += Spend;
-        placementHelper.Activate(collectiblePackage.CollectibleItem.Icon);
-    }
-
-    private void Spend()
+    public void Spend()
     {
         if (collectiblePackage.CollectibleData.Count > 0)
         {
             collectiblePackage.CollectibleData.Count--;
             UpdateObject();
-            gridSystem.InitializeObjectOnCellPosition(collectiblePackage.CollectibleItem.InitializableItem.InitializableObject, mainCamera.ScreenToWorldPoint(Input.mousePosition))
-                .Initialize(collectiblePackage.CollectibleItem.InitializableItem, null);
 
             if (collectiblePackage.CollectibleData.Count == 0)
             {
                 placementHelper.Deactivate();
             }
         }
+    }
+
+    private void Dragable_OnLeftCurtainEvent()
+    {
+        placementHelper.ActivateForMouseUp(this, collectiblePackage.CollectibleItem.Icon);
     }
 }

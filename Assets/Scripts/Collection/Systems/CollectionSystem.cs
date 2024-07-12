@@ -36,17 +36,21 @@ public class CollectionSystem : MonoBehaviour
 
     public void AddDrop(Drop drop)
     {
+        if (drop == null) return;
+        if (drop.CollectibleItem == null) return;
+        if (drop.Count == 0) return;
+
         int collectibleDataIndex = collectibleDataList.FindIndex(x => x.Id == drop.CollectibleItem.Id);
         if (collectibleDataIndex != -1)
         {
             collectibleDataList[collectibleDataIndex].Count += drop.Count;
-            GetCollectionListByType(drop.CollectibleItem.ItemType)?.UpdateObject(drop.CollectibleItem.Id);
+            GetCollectionListByType(drop.CollectibleItem)?.UpdateObject(drop.CollectibleItem.Id);
         }
         else
         {
             CollectibleData data = new CollectibleData(drop.CollectibleItem.Id, drop.Count);
             collectibleDataList.Add(data);
-            GetCollectionListByType(drop.CollectibleItem.ItemType)?.AddItem(new CollectiblePackage(data, drop.CollectibleItem));
+            GetCollectionListByType(drop.CollectibleItem)?.AddItem(new CollectiblePackage(data, drop.CollectibleItem));
         }
     }
 
@@ -97,7 +101,7 @@ public class CollectionSystem : MonoBehaviour
             int collectibleItemIndex = collectibleItemList.FindIndex(x => x.Id == collectibleDataList[i].Id);
             if (collectibleItemIndex != -1)
             {
-                GetCollectionListByType(collectibleItemList[collectibleItemIndex].ItemType)?.AddItem(new CollectiblePackage(collectibleDataList[i], collectibleItemList[collectibleItemIndex]));
+                GetCollectionListByType(collectibleItemList[collectibleItemIndex])?.AddItem(new CollectiblePackage(collectibleDataList[i], collectibleItemList[collectibleItemIndex]));
             }
         }
     }
@@ -120,11 +124,11 @@ public class CollectionSystem : MonoBehaviour
         }
     }
 
-    private CollectionList GetCollectionListByType(ItemType itemType)
+    private CollectionList GetCollectionListByType(CollectibleItem itemType)
     {
         return itemType switch
         {
-            ItemType.Seed => collectionListSeed,
+            SeedCollectibleItem => collectionListSeed,
             _ => null
         };
     }

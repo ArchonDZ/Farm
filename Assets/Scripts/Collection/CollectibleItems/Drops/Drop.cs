@@ -1,9 +1,10 @@
 using System;
+using UnityEngine;
 
 [Serializable]
 public class Drop
 {
-    public int Count;
+    [Min(0)] public int Count;
     public CollectibleItem CollectibleItem;
 
     public Drop(int count, CollectibleItem collectibleItem)
