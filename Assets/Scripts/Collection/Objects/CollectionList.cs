@@ -8,20 +8,25 @@ public class CollectionList : MonoBehaviour
     [SerializeField] private SidePanel sidePanel;
     [SerializeField] private CollectibleObject prefabCollectibleObject;
     [SerializeField] private Transform parent;
+    [SerializeField] private CollectibleLoadConfig loadConfig;
 
     [Inject] private DiContainer diContainer;
+    [Inject] private CollectionSystem collectionSystem;
 
-    private Dictionary<int, CollectibleObject> collectibleObjects = new Dictionary<int, CollectibleObject>();
+    void Start()
+    {
+        if (collectionSystem.TryGetCollectibleData(loadConfig, out List<CollectiblePackage> collectiblePackages))
+        {
+            for (int i = 0; i < collectiblePackages.Count; i++)
+            {
+                AddItem(collectiblePackages[i]);
+            }
+        }
+    }
 
-    public void AddItem(CollectiblePackage package)
+    private void AddItem(CollectiblePackage package)
     {
         CollectibleObject collectibleObject = diContainer.InstantiatePrefabForComponent<CollectibleObject>(prefabCollectibleObject, parent);
         collectibleObject.Initialize(package, sidePanel);
-        collectibleObjects.Add(package.CollectibleItem.Id, collectibleObject);
-    }
-
-    public void UpdateObject(int id)
-    {
-        collectibleObjects[id].UpdateObject();
     }
 }

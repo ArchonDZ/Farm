@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 [RequireComponent(typeof(PlaceableObject))]
 public class PlacementHelper : MonoBehaviour
@@ -9,23 +10,16 @@ public class PlacementHelper : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private PlaceableObject placeableObject;
 
+    [Inject] private Camera mainCamera;
+
     private CollectibleObject collectibleObject;
-    private Camera mainCamera;
     private Action action;
 
     public bool CanBePlacedOnTile => placeableObject.CanBePlaced();
 
-    void Start()
-    {
-        mainCamera = Camera.main;
-    }
-
     void Update()
     {
-        Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        mousePos.z = 0;
-        transform.position = mousePos;
-
+        UpdatePosition();
         action.Invoke();
     }
 
@@ -51,6 +45,14 @@ public class PlacementHelper : MonoBehaviour
         this.collectibleObject = collectibleObject;
         spriteRenderer.sprite = sprite;
         gameObject.SetActive(true);
+        UpdatePosition();
+    }
+
+    private void UpdatePosition()
+    {
+        Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        mousePos.z = 0;
+        transform.position = mousePos;
     }
 
     private void EveryFrameInterval()

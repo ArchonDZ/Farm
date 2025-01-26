@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 215f942ff7b217942a0846916d1e75de, type: 3}
   m_Name: MysteryPlantItem
   m_EditorClassIdentifier: 
-  Id: 1
+  Id: 1001
   InitializableObject: {fileID: 3760987546066023712, guid: 36905fba06b64364abf4af6c45820cd0, type: 3}
   Plants:
   - {fileID: 11400000, guid: 86d820a62739b4848806e5b49ed616a9, type: 2}

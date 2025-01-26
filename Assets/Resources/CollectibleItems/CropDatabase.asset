@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378751cdde6322644bf7531f9fb40152, type: 3}
+  m_Name: CropDatabase
+  m_EditorClassIdentifier: 
+  collectibleType: 4
+  collectibleItemList:
+  - {fileID: 11400000, guid: 7403a6cf25e89034fa6a964cd1c76a97, type: 2}

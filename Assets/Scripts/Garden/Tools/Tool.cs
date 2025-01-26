@@ -1,15 +1,11 @@
 using UnityEngine;
+using Zenject;
 
 public abstract class Tool : MonoBehaviour
 {
     [SerializeField] private int layerMaskPlant = 6;
 
-    private Camera mainCamera;
-
-    void Start()
-    {
-        mainCamera = Camera.main;
-    }
+    [Inject] private Camera mainCamera;
 
     protected void RaycastTool()
     {

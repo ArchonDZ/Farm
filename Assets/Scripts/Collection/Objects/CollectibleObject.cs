@@ -1,3 +1,4 @@
+using R3;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,50 +16,47 @@ public class CollectibleObject : MonoBehaviour
 
     private CollectiblePackage collectiblePackage;
 
-    public CollectiblePackage CollectiblePackage => collectiblePackage;
+    public CollectibleData CollectibleData => collectiblePackage.CollectibleData;
+    public CollectibleItem CollectibleItem => collectiblePackage.CollectibleItem;
 
     public void Initialize(CollectiblePackage package, CurtainPanel curtainPanel)
     {
         collectiblePackage = package;
-
         iconImage.sprite = collectiblePackage.CollectibleItem.Icon;
         titleText.text = collectiblePackage.CollectibleItem.Name;
-        UpdateObject();
+        collectiblePackage.CollectibleData.Count.Subscribe(UpdateObject).AddTo(this);
 
         dragable.Initialize(curtainPanel);
         dragable.OnLeftCurtainEvent += Dragable_OnLeftCurtainEvent;
     }
 
-    public void UpdateObject()
+    public void Spend()
     {
-        if (collectiblePackage.CollectibleData.Count > 0)
+        if (collectiblePackage.CollectibleData.TrySpend(1))
+        {
+            if (collectiblePackage.CollectibleData.Count.CurrentValue == 0)
+            {
+                placementHelper.Deactivate();
+            }
+        }
+    }
+
+    private void UpdateObject(int count)
+    {
+        if (count > 0)
         {
             if (!gameObject.activeSelf)
             {
                 gameObject.SetActive(true);
             }
 
-            countText.text = collectiblePackage.CollectibleData.Count.ToString();
+            countText.text = count.ToString();
         }
         else
         {
             if (gameObject.activeSelf)
             {
                 gameObject.SetActive(false);
-            }
-        }
-    }
-
-    public void Spend()
-    {
-        if (collectiblePackage.CollectibleData.Count > 0)
-        {
-            collectiblePackage.CollectibleData.Count--;
-            UpdateObject();
-
-            if (collectiblePackage.CollectibleData.Count == 0)
-            {
-                placementHelper.Deactivate();
             }
         }
     }

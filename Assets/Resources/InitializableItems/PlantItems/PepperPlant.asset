@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d199464cbadc30449a6bfc6a03bace8, type: 3}
   m_Name: PepperPlant
   m_EditorClassIdentifier: 
-  Id: 2
+  Id: 1002
   InitializableObject: {fileID: 3216736138069626618, guid: 03d44521cd4ea954eac7344b1e0fbb51, type: 3}
   chanceOfPest: 20
   PestTime:
@@ -64,7 +64,7 @@ MonoBehaviour:
     sprite: {fileID: 552322665, guid: f7ae8b96c0bf56e48823cc6c0a11f7e4, type: 3}
   DefinitelyDrops:
   - Count: 1
-    CollectibleItem: {fileID: 11400000, guid: 50446a642a36145409a30dfbacc4df8a, type: 2}
+    CollectibleItem: {fileID: 11400000, guid: 7403a6cf25e89034fa6a964cd1c76a97, type: 2}
   countRandomDrop: 1
   RandomDrop:
     Values:

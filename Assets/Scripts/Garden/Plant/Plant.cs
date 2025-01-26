@@ -45,8 +45,8 @@ public class Plant : InitializableObject
         }
         else
         {
-            placeableData.State = State;
-            placeableData.Stage = plantItem.Stages.IndexOf(Stage);
+            placeableData.SetState(State);
+            placeableData.SetStage(plantItem.Stages.IndexOf(Stage));
         }
     }
 

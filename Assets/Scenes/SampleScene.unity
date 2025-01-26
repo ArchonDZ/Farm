@@ -173,7 +173,7 @@ CapsuleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 4, y: -2}
+  m_Offset: {x: 0, y: 0}
   m_Size: {x: 1.5, y: 1.75}
   m_Direction: 0
 --- !u!4 &82635302
@@ -185,7 +185,7 @@ Transform:
   m_GameObject: {fileID: 82635300}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 4, y: -2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -995,6 +995,7 @@ MonoBehaviour:
   gridSystem: {fileID: 1645397749}
   collectionSystem: {fileID: 915060912}
   placementHelper: {fileID: 671881798865501117}
+  gameCamera: {fileID: 519420031}
 --- !u!1 &789048840
 GameObject:
   m_ObjectHideFlags: 0
@@ -3695,6 +3696,7 @@ MonoBehaviour:
   sidePanel: {fileID: 1890394538}
   prefabCollectibleObject: {fileID: 2543721401898806275, guid: ca0f472123599c14caa4e554f7f23736, type: 3}
   parent: {fileID: 2125198420}
+  loadConfig: {fileID: 11400000, guid: 368a401addb5cd349bbbc2c59f841703, type: 2}
 --- !u!1 &1987102092
 GameObject:
   m_ObjectHideFlags: 0
