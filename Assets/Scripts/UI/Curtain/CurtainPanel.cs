@@ -1,27 +1,19 @@
 using UnityEngine;
 using UnityEngine.UI;
-using Zenject;
 
 public abstract class CurtainPanel : MonoBehaviour
 {
     [SerializeField] private Button buttonOpen;
-    [SerializeField] protected RectTransform rectTransformPanel;
-
-    [Inject] private readonly GameArea gameArea;
 
     protected bool isOpened;
 
     void Awake()
     {
         buttonOpen.onClick.AddListener(ChangePanel);
-        gameArea.OnPointerClickEvent += ClosePanel;
+        VirtualAwake();
     }
 
-    public abstract void ClosePanel();
-
-    protected abstract void OpenPanel();
-
-    private void ChangePanel()
+    protected void ChangePanel()
     {
         if (isOpened)
         {
@@ -32,4 +24,9 @@ public abstract class CurtainPanel : MonoBehaviour
             OpenPanel();
         }
     }
+
+    protected virtual void VirtualAwake() { }
+
+    public abstract void ClosePanel();
+    public abstract void OpenPanel();
 }

@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: MysteryPlantItem
   m_EditorClassIdentifier: 
   Id: 1001
-  InitializableObject: {fileID: 3760987546066023712, guid: 36905fba06b64364abf4af6c45820cd0, type: 3}
+  InitializableObject: {fileID: 8573490449591990650, guid: c0da21c8b12701640ab520b6a7a29565, type: 3}
   Plants:
   - {fileID: 11400000, guid: 86d820a62739b4848806e5b49ed616a9, type: 2}

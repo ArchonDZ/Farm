@@ -14,17 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 1002
   InitializableObject: {fileID: 3216736138069626618, guid: 03d44521cd4ea954eac7344b1e0fbb51, type: 3}
-  chanceOfPest: 20
+  FertilizerMultiplier: 2
+  FertilizeTime:
+    Days: 0
+    Hours: 0
+    Minutes: 0
+    Seconds: 10
+  ChanceOfPest: 20
   PestTime:
     Days: 0
-    Hours: 0
+    Hours: 1
     Minutes: 0
-    Seconds: 14
+    Seconds: 0
   ThirstTime:
     Days: 0
-    Hours: 0
+    Hours: 1
     Minutes: 0
-    Seconds: 12
+    Seconds: 0
   Stages:
   - timeGrowth:
       Days: 0
@@ -36,36 +42,36 @@ MonoBehaviour:
       Days: 0
       Hours: 0
       Minutes: 0
-      Seconds: 10
+      Seconds: 5
     sprite: {fileID: 1442870719, guid: f7ae8b96c0bf56e48823cc6c0a11f7e4, type: 3}
   - timeGrowth:
       Days: 0
       Hours: 0
       Minutes: 0
-      Seconds: 15
+      Seconds: 5
     sprite: {fileID: -2048652278, guid: f7ae8b96c0bf56e48823cc6c0a11f7e4, type: 3}
   - timeGrowth:
       Days: 0
       Hours: 0
       Minutes: 0
-      Seconds: 20
+      Seconds: 5
     sprite: {fileID: 442356006, guid: f7ae8b96c0bf56e48823cc6c0a11f7e4, type: 3}
   - timeGrowth:
       Days: 0
       Hours: 0
       Minutes: 0
-      Seconds: 25
+      Seconds: 5
     sprite: {fileID: 1503451708, guid: f7ae8b96c0bf56e48823cc6c0a11f7e4, type: 3}
   - timeGrowth:
       Days: 0
       Hours: 0
       Minutes: 0
-      Seconds: 30
+      Seconds: 5
     sprite: {fileID: 552322665, guid: f7ae8b96c0bf56e48823cc6c0a11f7e4, type: 3}
   DefinitelyDrops:
   - Count: 1
     CollectibleItem: {fileID: 11400000, guid: 7403a6cf25e89034fa6a964cd1c76a97, type: 2}
-  countRandomDrop: 1
+  CountRandomDrop: 1
   RandomDrop:
     Values:
     - Weight: 1

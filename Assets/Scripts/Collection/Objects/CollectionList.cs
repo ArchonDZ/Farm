@@ -15,6 +15,7 @@ public class CollectionList : MonoBehaviour
 
     void Start()
     {
+        collectionSystem.OnCollectibleAddEvent += OnCollectibleAddEvent;
         if (collectionSystem.TryGetCollectibleData(loadConfig, out List<CollectiblePackage> collectiblePackages))
         {
             for (int i = 0; i < collectiblePackages.Count; i++)
@@ -22,6 +23,12 @@ public class CollectionList : MonoBehaviour
                 AddItem(collectiblePackages[i]);
             }
         }
+    }
+
+    private void OnCollectibleAddEvent(CollectiblePackage collectiblePackage)
+    {
+        if (collectionSystem.CheckComplianceConfig(loadConfig, collectiblePackage))
+            AddItem(collectiblePackage);
     }
 
     private void AddItem(CollectiblePackage package)

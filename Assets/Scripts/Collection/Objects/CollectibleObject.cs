@@ -16,7 +16,6 @@ public class CollectibleObject : MonoBehaviour
 
     private CollectiblePackage collectiblePackage;
 
-    public CollectibleData CollectibleData => collectiblePackage.CollectibleData;
     public CollectibleItem CollectibleItem => collectiblePackage.CollectibleItem;
 
     public void Initialize(CollectiblePackage package, CurtainPanel curtainPanel)

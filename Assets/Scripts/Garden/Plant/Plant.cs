@@ -17,14 +17,14 @@ public class Plant : InitializableObject
 
     [Inject] CollectionSystem collectionSystem;
 
-    private PlantStage stage;
-    private PlantState state;
     private PlantItem plantItem;
     private PlantPlaceableData placeableData;
+    private PlantStage stage;
+    private PlantState state;
 
-    public PlantStage Stage { get => stage; set { stage = value; UpdateSprite(); } }
-    public PlantState State { get => state; set { state = value; stateIndicator.UpdateState(value); } }
-    public PlantItem PlantItem => plantItem;
+    public PlantItem Item => plantItem;
+    public PlantPlaceableData Data => placeableData;
+    public PlantStage Stage => stage;
 
     void Awake()
     {
@@ -33,36 +33,25 @@ public class Plant : InitializableObject
 
     void Update()
     {
-        State.UpdateState();
+        state.UpdateState();
     }
 
-    void OnApplicationQuit()
+    public override void Initialize(InitializableItem initializableItem, PlaceableData savedPlaceableData)
     {
-        if (placeableData == null)
+        plantItem = initializableItem as PlantItem;
+        if (savedPlaceableData == null)
         {
-            placeableData = new PlantPlaceableData(plantItem.Id, transform.position, plantItem.Stages.IndexOf(Stage), State);
+            placeableData = new PlantPlaceableData(plantItem.Id, transform.position, state);
+            SetState(new Growth(this));
+            SetStage(plantItem.Stages[0]);
             collectionSystem.AddPlaceable(placeableData);
         }
         else
         {
-            placeableData.SetState(State);
-            placeableData.SetStage(plantItem.Stages.IndexOf(Stage));
-        }
-    }
-
-    public override void Initialize(InitializableItem initializableItem, PlaceableData placeableData)
-    {
-        plantItem = initializableItem as PlantItem;
-        if (placeableData == null)
-        {
-            State = new Growth(this);
-        }
-        else
-        {
-            this.placeableData = placeableData as PlantPlaceableData;
-            State = this.placeableData.State;
-            Stage = plantItem.Stages[this.placeableData.Stage];
-            this.placeableData.State.Initialize(this);
+            placeableData = savedPlaceableData as PlantPlaceableData;
+            SetState(placeableData.State);
+            SetStage(plantItem.Stages[placeableData.Stage]);
+            placeableData.State.Initialize(this);
         }
     }
 
@@ -73,30 +62,125 @@ public class Plant : InitializableObject
 
     public void Irrigate()
     {
-        if (State is Thirst thirst)
+        if (state is Thirst thirst)
         {
             thirst.EndState();
+        }
+        else if (state is StateDecorator decorator && decorator.TryGetPlantState<Thirst>(out PlantState decoratedThirst))
+        {
+            (decoratedThirst as Thirst)?.EndState();
         }
     }
 
     public void Spray()
     {
-        if (State is Pest pest)
+        if (state is Pest pest)
         {
             pest.EndState();
+        }
+        else if (state is StateDecorator decorator && decorator.TryGetPlantState<Pest>(out PlantState decoratedPest))
+        {
+            (decoratedPest as Pest)?.EndState();
         }
     }
 
     public void Harvest()
     {
-        if (State is WaitHarvest)
+        if (state is WaitHarvest || (state is StateDecorator decorator && decorator.TryGetPlantState<WaitHarvest>(out _)))
         {
             collectionSystem.AddDrops(plantItem.DefinitelyDrops);
-            for (int i = 0; i < plantItem.countRandomDrop; i++)
+
+            int additiveFertilizeDrop = placeableData.IsFertilized ? 1 : 0;
+            for (int i = 0; i < plantItem.CountRandomDrop + additiveFertilizeDrop; i++)
             {
                 collectionSystem.AddDrop(plantItem.RandomDrop.GetRandomValue());
             }
             Destroy();
+        }
+    }
+
+    public void Fertilize(float accelerationGrowth)
+    {
+        placeableData.TimeStartFertilize = DateTime.Now;
+        placeableData.RemainingFertilizeTime = (float)plantItem.FertilizeTimeSpan.TotalSeconds;
+        placeableData.AccelerationGrowth = Mathf.Max(placeableData.AccelerationGrowth, plantItem.FertilizerMultiplier * accelerationGrowth);
+        placeableData.IsFertilized = true;
+
+        SetDecorator(new Fertilized(this, state));
+    }
+
+    public void SetStage(PlantStage plantStage)
+    {
+        stage = plantStage;
+
+        if (placeableData != null)
+            placeableData.Stage = plantItem.Stages.IndexOf(stage);
+
+        spriteRenderer.sprite = stage.sprite;
+    }
+
+    public void SetState(PlantState plantState)
+    {
+        if (state is StateDecorator decorator)
+        {
+            decorator.PackState(plantState);
+        }
+        else
+        {
+            state = plantState;
+            UpdateStateData(state);
+        }
+
+        stateIndicator.UpdateState(plantState);
+    }
+
+    public void SetDecorator(StateDecorator stateDecorator)
+    {
+        state = stateDecorator;
+        UpdateStateData(state);
+        stateIndicator.SetDecorator(stateDecorator);
+    }
+
+    public void ResetDecorator(StateDecorator stateDecoratorReset)
+    {
+        if (state is StateDecorator decorator)
+        {
+            if (ReferenceEquals(decorator, stateDecoratorReset))
+            {
+                state = decorator.GetState();
+                UpdateStateData(state);
+                stateIndicator.ResetDecorator(decorator);
+            }
+            else
+            {
+                FindDecorator(decorator, stateDecoratorReset);
+            }
+        }
+    }
+
+    private void FindDecorator(StateDecorator upperDecorator, StateDecorator stateDecoratorReset)
+    {
+        PlantState packedState = upperDecorator.GetState();
+        if (packedState is StateDecorator decorator)
+        {
+            if (ReferenceEquals(decorator, stateDecoratorReset))
+            {
+                PlantState lowerState = decorator.GetState();
+                upperDecorator.SetState(lowerState);
+                stateIndicator.ResetDecorator(decorator);
+            }
+            else
+            {
+                FindDecorator(decorator, stateDecoratorReset);
+            }
+        }
+    }
+
+    private void UpdateStateData(PlantState plantState)
+    {
+        if (placeableData != null)
+        {
+            placeableData.State = plantState;
         }
     }
 
@@ -105,10 +189,5 @@ public class Plant : InitializableObject
         collectionSystem.RemovePlaceable(placeableData);
         placeableObject.Clear();
         Destroy(gameObject);
-    }
-
-    private void UpdateSprite()
-    {
-        spriteRenderer.sprite = Stage.sprite;
     }
 }

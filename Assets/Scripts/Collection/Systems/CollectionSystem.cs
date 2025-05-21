@@ -45,7 +45,6 @@ public class CollectionSystem : MonoBehaviour
     {
         if (drop == null) return;
         if (drop.CollectibleItem == null) return;
-        if (drop.Count == 0) return;
 
         int collectibleDataIndex = collectibleDataList.FindIndex(x => x.Id == drop.CollectibleItem.Id);
         if (collectibleDataIndex != -1)
@@ -89,6 +88,34 @@ public class CollectionSystem : MonoBehaviour
         ));
 
         return resultCollectiblePackage.Count > 0;
+    }
+
+    public bool CheckComplianceConfig(CollectibleLoadConfig loadConfig, CollectiblePackage collectiblePackage)
+    {
+        List<CollectibleDatabase> databases = collectibleDatabaseList.FindAll(x => (loadConfig.FullDatabase & x.CollectibleType) > 0);
+        for (int i = 0; i < databases.Count; i++)
+            if (databases[i].CollectibleList.Contains(collectiblePackage.CollectibleItem))
+                return true;
+
+        if (loadConfig.IDDistinct.Contains(collectiblePackage.CollectibleItem.Id))
+            return true;
+
+        if (loadConfig.IDRanges.Exists(r => r.Start <= collectiblePackage.CollectibleItem.Id && collectiblePackage.CollectibleItem.Id < r.End))
+            return true;
+
+        return false;
+    }
+
+    public bool TryGetCollectibleData(CollectibleItem collectibleItem, out CollectibleData collectibleData)
+    {
+        CollectiblePackage package = collectiblePackages.Find(x => x.CollectibleItem.Equals(collectibleItem));
+        if (package != null)
+        {
+            collectibleData = package.CollectibleData;
+            return true;
+        }
+        collectibleData = null;
+        return false;
     }
 
     [ContextMenu("Load")]
