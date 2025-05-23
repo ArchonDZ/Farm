@@ -80,6 +80,7 @@ public class Growth : PlantState
     {
         double freezeTime = DateTime.Now.Subtract(datum).TotalSeconds;
         plant.Data.GrowthTime = plant.Data.GrowthTime.AddSeconds(freezeTime);
+        CheckFertilizer();
     }
 
     private bool ChanceOfPest()
@@ -96,11 +97,7 @@ public class Growth : PlantState
             PlantStage nextStage = plant.Item.Stages[indexNextStage];
             TimeSpan growthTime = new TimeSpan(nextStage.timeGrowth.Days, nextStage.timeGrowth.Hours, nextStage.timeGrowth.Minutes, nextStage.timeGrowth.Seconds);
             plant.Data.GrowthTime = datum.AddSeconds(growthTime.TotalSeconds);
-
-            if (plant.TryGetDecorator(out Fertilized fertilized))
-            {
-                fertilized.RecalculateGrowth();
-            }
+            CheckFertilizer();
         }
         else
         {
@@ -135,16 +132,29 @@ public class Growth : PlantState
             }
         }
     }
+
+    private void CheckFertilizer()
+    {
+        if (plant.TryGetDecorator(out Fertilized fertilized))
+        {
+            fertilized.RecalculateGrowth();
+        }
+    }
 }
 
 [Serializable]
-public class Pest : PlantState
+public abstract class AwaitingPlantState : PlantState
 {
-    [SerializeField] private readonly Growth lastStateGrowth;
+    [SerializeField] protected readonly Growth lastStateGrowth;
 
-    public Pest(Plant plant, Growth growth) : base(plant)
+    public AwaitingPlantState(Plant plant, Growth growth) : base(plant)
     {
         lastStateGrowth = growth;
+
+        if (plant.TryGetDecorator(out Fertilized fertilized))
+        {
+            fertilized.CancelAccelerationGrowth();
+        }
     }
 
     public override void Initialize(Plant plant)
@@ -155,7 +165,15 @@ public class Pest : PlantState
 
     public override void UpdateState() { }
 
-    public void EndState()
+    public abstract void EndState();
+}
+
+[Serializable]
+public class Pest : AwaitingPlantState
+{
+    public Pest(Plant plant, Growth growth) : base(plant, growth) { }
+
+    public override void EndState()
     {
         lastStateGrowth.RecoverGrowth(plant.Data.PestTime);
         lastStateGrowth.RecoverPest();
@@ -164,24 +182,11 @@ public class Pest : PlantState
 }
 
 [Serializable]
-public class Thirst : PlantState
+public class Thirst : AwaitingPlantState
 {
-    [SerializeField] private readonly Growth lastStateGrowth;
+    public Thirst(Plant plant, Growth growth) : base(plant, growth) { }
 
-    public Thirst(Plant plant, Growth growth) : base(plant)
-    {
-        lastStateGrowth = growth;
-    }
-
-    public override void Initialize(Plant plant)
-    {
-        base.Initialize(plant);
-        lastStateGrowth.InitializeFromState(plant);
-    }
-
-    public override void UpdateState() { }
-
-    public void EndState()
+    public override void EndState()
     {
         lastStateGrowth.RecoverGrowth(plant.Data.ThirstTime);
         lastStateGrowth.RecoverThirst();
@@ -276,6 +281,13 @@ public class Fertilized : StateDecorator
     {
         base.UpdateState();
         CheckFertilizeTime();
+    }
+
+    public void CancelAccelerationGrowth()
+    {
+        DateTime currentTime = DateTime.Now;
+        double remainGrowthTime = plant.Data.GrowthTime.Subtract(currentTime).TotalSeconds;
+        plant.Data.GrowthTime = currentTime.AddSeconds(remainGrowthTime * accelerationGrowth);
     }
 
     public void RecalculateGrowth()
