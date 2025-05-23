@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [Serializable]
 public abstract class PlantState
@@ -24,10 +25,9 @@ public class Growth : PlantState
 {
     public Growth(Plant plant) : base(plant)
     {
-        InitializeGrowth();
+        InitializeGrowth(DateTime.Now);
         RecoverThirst();
         RecoverPest();
-        RecoverTimers();
     }
 
     public override void Initialize(Plant plant)
@@ -43,104 +43,95 @@ public class Growth : PlantState
 
     public override void UpdateState()
     {
-        plant.Data.RemainingPestTime -= Time.deltaTime;
-        if (plant.Data.RemainingPestTime <= 0)
+        DateTime now = DateTime.Now;
+        if (plant.Data.PestTime.CompareTo(now) <= 0)
         {
             if (ChanceOfPest())
             {
-                plant.Data.RemainingPestTime = 0f;
                 plant.SetState(new Pest(plant, this));
                 return;
             }
             RecoverPest();
         }
 
-        plant.Data.RemainingThirstTime -= Time.deltaTime;
-        if (plant.Data.RemainingThirstTime <= 0)
+        if (plant.Data.ThirstTime.CompareTo(now) <= 0)
         {
-            plant.Data.RemainingThirstTime = 0f;
             plant.SetState(new Thirst(plant, this));
             return;
         }
 
-        plant.Data.RemainingGrowthTime -= Time.deltaTime;
-        if (plant.Data.RemainingGrowthTime <= 0)
+        if (plant.Data.GrowthTime.CompareTo(now) <= 0)
         {
-            InitializeGrowth();
+            InitializeGrowth(now);
         }
     }
 
     public void RecoverThirst()
     {
-        plant.Data.RemainingThirstTime = (float)plant.Item.ThirstTimeSpan.TotalSeconds;
+        plant.Data.ThirstTime = DateTime.Now.AddSeconds(plant.Item.ThirstTimeSpan.TotalSeconds);
     }
 
     public void RecoverPest()
     {
-        plant.Data.RemainingPestTime = (float)plant.Item.PestTimeSpan.TotalSeconds;
+        plant.Data.PestTime = DateTime.Now.AddSeconds(plant.Item.PestTimeSpan.TotalSeconds);
     }
 
-    public void RecoverTimers()
+    public void RecoverGrowth(DateTime datum)
     {
-        plant.Data.TimeStartGrowth = DateTime.Now;
-        plant.Data.TimeStartPest = DateTime.Now;
-        plant.Data.TimeStartThirst = DateTime.Now;
+        double freezeTime = DateTime.Now.Subtract(datum).TotalSeconds;
+        plant.Data.GrowthTime = plant.Data.GrowthTime.AddSeconds(freezeTime);
     }
 
     private bool ChanceOfPest()
     {
-        return UnityEngine.Random.Range(1, 101) <= plant.Item.ChanceOfPest;
+        return Random.Range(1, 101) <= plant.Item.ChanceOfPest;
     }
 
-    private void InitializeGrowth()
+    private void InitializeGrowth(DateTime datum)
     {
         plant.SetStage(plant.Item.Stages[plant.Item.Stages.IndexOf(plant.Stage) + 1]);
         int indexNextStage = plant.Item.Stages.IndexOf(plant.Stage) + 1;
         if (indexNextStage <= plant.Item.Stages.Count - 1)
         {
-            PlantStage nextPlantStage = plant.Item.Stages[indexNextStage];
-            TimeSpan endGrowthTime = new TimeSpan(nextPlantStage.timeGrowth.Days, nextPlantStage.timeGrowth.Hours, nextPlantStage.timeGrowth.Minutes, nextPlantStage.timeGrowth.Seconds);
-            plant.Data.RemainingGrowthTime = (float)endGrowthTime.TotalSeconds;
-            plant.Data.TimeStartGrowth = DateTime.Now;
+            PlantStage nextStage = plant.Item.Stages[indexNextStage];
+            TimeSpan growthTime = new TimeSpan(nextStage.timeGrowth.Days, nextStage.timeGrowth.Hours, nextStage.timeGrowth.Minutes, nextStage.timeGrowth.Seconds);
+            plant.Data.GrowthTime = datum.AddSeconds(growthTime.TotalSeconds);
+
+            if (plant.TryGetDecorator(out Fertilized fertilized))
+            {
+                fertilized.RecalculateGrowth();
+            }
         }
         else
         {
-            plant.Data.RemainingGrowthTime = 0f;
             plant.SetState(new WaitHarvest(plant));
         }
     }
 
     private void RecalculateTime()
     {
-        DateTime currentTime = DateTime.Now;
-        DateTime pestEndTime = plant.Data.TimeStartPest.AddSeconds(plant.Data.RemainingPestTime);
-        DateTime thirstEndTime = plant.Data.TimeStartThirst.AddSeconds(plant.Data.RemainingThirstTime);
-        DateTime growthEndTime = plant.Data.TimeStartGrowth;
+        DateTime now = DateTime.Now;
+        DateTime thirstEndTime = plant.Data.ThirstTime;
+        DateTime pestEndTime = plant.Data.PestTime;
 
         for (int i = plant.Item.Stages.IndexOf(plant.Stage); i < plant.Item.Stages.Count - 1; i++)
         {
-            growthEndTime = growthEndTime.AddSeconds(plant.Data.RemainingGrowthTime);
+            DateTime growthEndTime = plant.Data.GrowthTime;
 
-            plant.Data.RemainingGrowthTime = (float)growthEndTime.Subtract(currentTime).TotalSeconds;
-            plant.Data.RemainingPestTime = (float)pestEndTime.Subtract(currentTime).TotalSeconds;
-            plant.Data.RemainingThirstTime = (float)thirstEndTime.Subtract(currentTime).TotalSeconds;
-
-            if (plant.Data.RemainingPestTime <= 0 && plant.Data.RemainingPestTime <= plant.Data.RemainingThirstTime &&
-                plant.Data.RemainingPestTime <= plant.Data.RemainingGrowthTime && ChanceOfPest())
+            if (pestEndTime.CompareTo(now) <= 0 && pestEndTime.CompareTo(thirstEndTime) <= 0 &&
+                pestEndTime.CompareTo(growthEndTime) <= 0 && ChanceOfPest())
             {
-                plant.Data.RemainingPestTime = 0f;
                 plant.SetState(new Pest(plant, this));
                 break;
             }
-            else if (plant.Data.RemainingThirstTime <= 0 && plant.Data.RemainingThirstTime <= plant.Data.RemainingGrowthTime)
+            else if (thirstEndTime.CompareTo(now) <= 0 && thirstEndTime.CompareTo(growthEndTime) <= 0)
             {
-                plant.Data.RemainingThirstTime = 0f;
                 plant.SetState(new Thirst(plant, this));
                 break;
             }
-            else if (plant.Data.RemainingGrowthTime <= 0)
+            else if (growthEndTime.CompareTo(now) <= 0)
             {
-                InitializeGrowth();
+                InitializeGrowth(growthEndTime);
             }
         }
     }
@@ -166,8 +157,8 @@ public class Pest : PlantState
 
     public void EndState()
     {
+        lastStateGrowth.RecoverGrowth(plant.Data.PestTime);
         lastStateGrowth.RecoverPest();
-        lastStateGrowth.RecoverTimers();
         plant.SetState(lastStateGrowth);
     }
 }
@@ -192,8 +183,8 @@ public class Thirst : PlantState
 
     public void EndState()
     {
+        lastStateGrowth.RecoverGrowth(plant.Data.ThirstTime);
         lastStateGrowth.RecoverThirst();
-        lastStateGrowth.RecoverTimers();
         plant.SetState(lastStateGrowth);
     }
 }
@@ -227,16 +218,22 @@ public abstract class StateDecorator : PlantState
         packedPlantState.UpdateState();
     }
 
-    public bool TryGetPlantState<T>(out PlantState state)
+    public bool TryGetPlantState<T>(out T state) where T : PlantState
     {
-        state = packedPlantState;
-
         if (packedPlantState is T)
+        {
+            state = packedPlantState as T;
             return true;
-        else if (packedPlantState is StateDecorator decorator)
-            return decorator.TryGetPlantState<T>(out state);
-        else
+        }
+        else if (packedPlantState is not StateDecorator decorator)
+        {
+            state = null;
             return false;
+        }
+        else
+        {
+            return decorator.TryGetPlantState(out state);
+        }
     }
 
     public void SetState(PlantState _plantState)
@@ -258,19 +255,78 @@ public abstract class StateDecorator : PlantState
     }
 }
 
+[Serializable]
 public class Fertilized : StateDecorator
 {
-    public Fertilized(Plant plant, PlantState _plantState) : base(plant, _plantState) { }
+    [SerializeField] private float accelerationGrowth = 1f;
+    [SerializeField] private DateTime fertilizeTime;
+
+    public Fertilized(Plant plant, PlantState _plantState, float accelerationGrowth) : base(plant, _plantState)
+    {
+        InitializeFertilized(accelerationGrowth);
+    }
+
+    public override void Initialize(Plant plant)
+    {
+        base.Initialize(plant);
+        CheckFertilizeTime();
+    }
 
     public override void UpdateState()
     {
-        plant.Data.RemainingFertilizeTime -= Time.deltaTime;
-        if (plant.Data.RemainingFertilizeTime <= 0)
+        base.UpdateState();
+        CheckFertilizeTime();
+    }
+
+    public void RecalculateGrowth()
+    {
+        RecalculateGrowth(fertilizeTime.Subtract(DateTime.Now).TotalSeconds);
+    }
+
+    public void ProlongFertilize(float accelerationGrowth)
+    {
+        DateTime previousFertilizeTime = fertilizeTime;
+        fertilizeTime = DateTime.Now.AddSeconds(plant.Item.FertilizeTimeSpan.TotalSeconds);
+        double additiveFertilizeSeconds = fertilizeTime.Subtract(previousFertilizeTime).TotalSeconds;
+
+        AccelerateGrowthTime(accelerationGrowth, additiveFertilizeSeconds);
+    }
+
+    private void InitializeFertilized(float accelerationGrowth)
+    {
+        plant.Data.IsFertilized = true;
+        fertilizeTime = DateTime.Now.AddSeconds(plant.Item.FertilizeTimeSpan.TotalSeconds);
+
+        AccelerateGrowthTime(accelerationGrowth, plant.Item.FertilizeTimeSpan.TotalSeconds);
+    }
+
+    private void AccelerateGrowthTime(float acceleration, double fertilizedTime)
+    {
+        accelerationGrowth = Mathf.Max(accelerationGrowth, plant.Item.FertilizerMultiplier * acceleration);
+        RecalculateGrowth(fertilizedTime);
+    }
+
+    private void RecalculateGrowth(double fertilizedTime)
+    {
+        if (fertilizeTime.CompareTo(plant.Data.GrowthTime) < 0)
         {
-            plant.Data.RemainingFertilizeTime = 0f;
+            double savedTime = fertilizedTime - (fertilizedTime * accelerationGrowth);
+            plant.Data.GrowthTime = plant.Data.GrowthTime.AddSeconds(savedTime);
+        }
+        else
+        {
+            DateTime currentTime = DateTime.Now;
+            double remainingTime = plant.Data.GrowthTime.Subtract(currentTime).TotalSeconds;
+            double newTime = remainingTime / accelerationGrowth;
+            plant.Data.GrowthTime = currentTime.AddSeconds(newTime);
+        }
+    }
+
+    private void CheckFertilizeTime()
+    {
+        if (fertilizeTime.CompareTo(DateTime.Now) <= 0)
+        {
             plant.ResetDecorator(this);
         }
-
-        base.UpdateState();
     }
 }

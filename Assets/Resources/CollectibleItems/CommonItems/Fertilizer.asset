@@ -15,3 +15,4 @@ MonoBehaviour:
   Id: 1
   Name: Fertilizer
   Icon: {fileID: 21300000, guid: 8d94ac13b82d5564987886471de392bd, type: 3}
+  AccelerationGrowth: 2

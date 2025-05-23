@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 [Serializable]
 public struct PlantStage
@@ -49,7 +50,7 @@ public class Plant : InitializableObject
         else
         {
             placeableData = savedPlaceableData as PlantPlaceableData;
-            SetState(placeableData.State);
+            LoadState(placeableData.State);
             SetStage(plantItem.Stages[placeableData.Stage]);
             placeableData.State.Initialize(this);
         }
@@ -66,9 +67,9 @@ public class Plant : InitializableObject
         {
             thirst.EndState();
         }
-        else if (state is StateDecorator decorator && decorator.TryGetPlantState<Thirst>(out PlantState decoratedThirst))
+        else if (state is StateDecorator decorator && decorator.TryGetPlantState(out Thirst decoratedThirst))
         {
-            (decoratedThirst as Thirst)?.EndState();
+            decoratedThirst.EndState();
         }
     }
 
@@ -78,9 +79,9 @@ public class Plant : InitializableObject
         {
             pest.EndState();
         }
-        else if (state is StateDecorator decorator && decorator.TryGetPlantState<Pest>(out PlantState decoratedPest))
+        else if (state is StateDecorator decorator && decorator.TryGetPlantState(out Pest decoratedPest))
         {
-            (decoratedPest as Pest)?.EndState();
+            decoratedPest.EndState();
         }
     }
 
@@ -89,9 +90,12 @@ public class Plant : InitializableObject
         if (state is WaitHarvest || (state is StateDecorator decorator && decorator.TryGetPlantState<WaitHarvest>(out _)))
         {
             collectionSystem.AddDrops(plantItem.DefinitelyDrops);
+            if (placeableData.IsFertilized && 0 < plantItem.DefinitelyDrops.Count)
+            {
+                collectionSystem.AddDrop(plantItem.DefinitelyDrops[Random.Range(0, plantItem.DefinitelyDrops.Count)]);
+            }
 
-            int additiveFertilizeDrop = placeableData.IsFertilized ? 1 : 0;
-            for (int i = 0; i < plantItem.CountRandomDrop + additiveFertilizeDrop; i++)
+            for (int i = 0; i < plantItem.CountRandomDrop; i++)
             {
                 collectionSystem.AddDrop(plantItem.RandomDrop.GetRandomValue());
             }
@@ -101,12 +105,14 @@ public class Plant : InitializableObject
 
     public void Fertilize(float accelerationGrowth)
     {
-        placeableData.TimeStartFertilize = DateTime.Now;
-        placeableData.RemainingFertilizeTime = (float)plantItem.FertilizeTimeSpan.TotalSeconds;
-        placeableData.AccelerationGrowth = Mathf.Max(placeableData.AccelerationGrowth, plantItem.FertilizerMultiplier * accelerationGrowth);
-        placeableData.IsFertilized = true;
-
-        SetDecorator(new Fertilized(this, state));
+        if (!TryGetDecorator(out Fertilized fertilized))
+        {
+            SetDecorator(new Fertilized(this, state, accelerationGrowth));
+        }
+        else
+        {
+            fertilized.ProlongFertilize(accelerationGrowth);
+        }
     }
 
     public void SetStage(PlantStage plantStage)
@@ -153,12 +159,26 @@ public class Plant : InitializableObject
             }
             else
             {
-                FindDecorator(decorator, stateDecoratorReset);
+                FindResetDecorator(decorator, stateDecoratorReset);
             }
         }
     }
 
-    private void FindDecorator(StateDecorator upperDecorator, StateDecorator stateDecoratorReset)
+    public bool TryGetDecorator<T>(out T result) where T : StateDecorator
+    {
+        if (state is not StateDecorator decorator || !(decorator is T desired || decorator.TryGetPlantState(out desired)))
+        {
+            result = null;
+            return false;
+        }
+        else
+        {
+            result = desired;
+            return true;
+        }
+    }
+
+    private void FindResetDecorator(StateDecorator upperDecorator, StateDecorator stateDecoratorReset)
     {
         PlantState packedState = upperDecorator.GetState();
         if (packedState is StateDecorator decorator)
@@ -171,7 +191,26 @@ public class Plant : InitializableObject
             }
             else
             {
-                FindDecorator(decorator, stateDecoratorReset);
+                FindResetDecorator(decorator, stateDecoratorReset);
+            }
+        }
+    }
+
+    private void LoadState(PlantState plantState)
+    {
+        state = plantState;
+        IndicateUnpackState(plantState);
+
+        void IndicateUnpackState(PlantState plantState)
+        {
+            if (plantState is StateDecorator decorator)
+            {
+                stateIndicator.SetDecorator(decorator);
+                IndicateUnpackState(decorator.GetState());
+            }
+            else
+            {
+                stateIndicator.UpdateState(plantState);
             }
         }
     }

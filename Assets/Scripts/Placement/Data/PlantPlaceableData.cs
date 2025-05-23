@@ -7,16 +7,9 @@ public class PlantPlaceableData : PlaceableData
     public int Stage;
     public PlantState State;
 
-    public DateTime TimeStartGrowth;
-    public DateTime TimeStartPest;
-    public DateTime TimeStartThirst;
-    public DateTime TimeStartFertilize;
-
-    public float RemainingGrowthTime;
-    public float RemainingPestTime;
-    public float RemainingThirstTime;
-    public float RemainingFertilizeTime;
-    public float AccelerationGrowth;
+    public DateTime GrowthTime;
+    public DateTime PestTime;
+    public DateTime ThirstTime;
 
     public bool IsFertilized;
 
