@@ -7,7 +7,9 @@ using Zenject;
 public class CompostBin : MonoBehaviour, IInteractionPlace, IPointerClickHandler
 {
     [SerializeField] private int maxFillAmount = 10;
+    [SerializeField] private float fillInterval = 1f;
     [SerializeField] private GameObject fullIndicator;
+    [SerializeField] private SpriteTransition spriteTransition;
     [SerializeField] private CollectibleItem fertilizerCollectibleItem;
     [SerializeField] private ParticleSystem particle;
 
@@ -15,6 +17,7 @@ public class CompostBin : MonoBehaviour, IInteractionPlace, IPointerClickHandler
     [Inject] private CollectionSystem collectionSystem;
 
     private CompostBinData data;
+    private float lastInteractionTime;
 
     void Start()
     {
@@ -34,12 +37,15 @@ public class CompostBin : MonoBehaviour, IInteractionPlace, IPointerClickHandler
     public void Interaction(PlacementHelper placementHelper, CollectibleObject collectibleObject)
     {
         if (data.Amount >= maxFillAmount) return;
+        if (Time.time - lastInteractionTime < fillInterval) return;
+        lastInteractionTime = Time.time;
 
         if (collectibleObject.CollectibleItem is SeedCollectibleItem ||
         collectibleObject.CollectibleItem is CropCollectibleItem)
         {
             collectibleObject.Spend();
             data.Amount++;
+            spriteTransition.Play(collectibleObject.CollectibleItem.Icon, placementHelper.transform.position, Vector3.up, transform.position, Vector3.up, 0.8f);
         }
     }
     #endregion
