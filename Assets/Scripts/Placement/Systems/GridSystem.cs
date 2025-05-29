@@ -31,7 +31,10 @@ public class GridSystem : MonoBehaviour
     {
         position.z = 0;
         Vector3Int cellPos = gridLayout.WorldToCell(position);
-        Vector3 pos = gridLayout.CellToLocalInterpolated(cellPos) + Vector3.up * gridLayout.cellSize.y / 2f;
+        Vector3 pos = gridLayout.CellToLocalInterpolated(cellPos) + 
+            Vector3.up * gridLayout.cellSize.y / 2f + 
+            Vector3.forward * (cellPos.x + cellPos.y);
+
         return InitializeObjectOnPosition(build, pos);
     }
 

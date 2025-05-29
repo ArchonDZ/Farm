@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4611049578492767100, guid: 03d44521cd4ea954eac7344b1e0fbb51, type: 3}
       propertyPath: m_Name
-      value: RandomPlant Variant
+      value: RandomPlant
       objectReference: {fileID: 0}
     - target: {fileID: 6094331806998484800, guid: 03d44521cd4ea954eac7344b1e0fbb51, type: 3}
       propertyPath: m_LocalPosition.x
@@ -79,6 +79,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 8471485407430857440}
+  polygonCollider: {fileID: 7487012035857171157}
   placeableObject: {fileID: 7256910841453029888}
   stateIndicator: {fileID: 8544774232699113801}
 --- !u!114 &7256910841453029888 stripped
@@ -92,6 +93,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bd2b6edc4cdd6546b9827258c91457e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!60 &7487012035857171157 stripped
+PolygonCollider2D:
+  m_CorrespondingSourceObject: {fileID: 266636187440937686, guid: 03d44521cd4ea954eac7344b1e0fbb51, type: 3}
+  m_PrefabInstance: {fileID: 7229541790892242947}
+  m_PrefabAsset: {fileID: 0}
 --- !u!212 &8471485407430857440 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 1280358116565412579, guid: 03d44521cd4ea954eac7344b1e0fbb51, type: 3}

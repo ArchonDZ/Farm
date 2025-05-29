@@ -13,6 +13,7 @@ public struct PlantStage
 public class Plant : InitializableObject
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private PolygonCollider2D polygonCollider;
     [SerializeField] private PlaceableObject placeableObject;
     [SerializeField] private PlantStateIndicator stateIndicator;
 
@@ -123,6 +124,7 @@ public class Plant : InitializableObject
             placeableData.Stage = plantItem.Stages.IndexOf(stage);
 
         spriteRenderer.sprite = stage.sprite;
+        polygonCollider.UpdateColliderToSprite(stage.sprite);
     }
 
     public void SetState(PlantState plantState)
