@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using UnityEngine;
 using Zenject;
@@ -17,12 +18,18 @@ public class Plant : InitializableObject
     [SerializeField] private PlaceableObject placeableObject;
     [SerializeField] private PlantStateIndicator stateIndicator;
 
+    [Header("Stage Transition Settings")]
+    [SerializeField] private float transitionEndScaleY = 1.1f;
+    [SerializeField] private float transitionScaleDurationTime = 0.5f;
+    [SerializeField] private Ease transitionScaleEase;
+
     [Inject] CollectionSystem collectionSystem;
 
     private PlantItem plantItem;
     private PlantPlaceableData placeableData;
     private PlantStage stage;
     private PlantState state;
+    private Tween tweenTransitionScale;
 
     public PlantItem Item => plantItem;
     public PlantPlaceableData Data => placeableData;
@@ -38,6 +45,11 @@ public class Plant : InitializableObject
         state.UpdateState();
     }
 
+    void OnDestroy()
+    {
+        tweenTransitionScale?.Kill();
+    }
+
     public override void Initialize(InitializableItem initializableItem, PlaceableData savedPlaceableData)
     {
         plantItem = initializableItem as PlantItem;
@@ -45,14 +57,14 @@ public class Plant : InitializableObject
         {
             placeableData = new PlantPlaceableData(plantItem.Id, transform.position, state);
             SetState(new Growth(this));
-            SetStage(plantItem.Stages[0]);
+            SetStage(plantItem.Stages[0], false);
             collectionSystem.AddPlaceable(placeableData);
         }
         else
         {
             placeableData = savedPlaceableData as PlantPlaceableData;
             LoadState(placeableData.State);
-            SetStage(plantItem.Stages[placeableData.Stage]);
+            SetStage(plantItem.Stages[placeableData.Stage], false);
             placeableData.State.Initialize(this);
         }
     }
@@ -116,15 +128,17 @@ public class Plant : InitializableObject
         }
     }
 
-    public void SetStage(PlantStage plantStage)
+    public void SetStage(PlantStage plantStage, bool animated)
     {
         stage = plantStage;
 
         if (placeableData != null)
             placeableData.Stage = plantItem.Stages.IndexOf(stage);
 
-        spriteRenderer.sprite = stage.sprite;
-        polygonCollider.UpdateColliderToSprite(stage.sprite);
+        if (animated)
+            TweenUpdateSprite();
+        else
+            UpdateSprite();
     }
 
     public void SetState(PlantState plantState)
@@ -215,6 +229,24 @@ public class Plant : InitializableObject
                 stateIndicator.UpdateState(plantState);
             }
         }
+    }
+
+    private void TweenUpdateSprite()
+    {
+        tweenTransitionScale = spriteRenderer.transform.DOScaleY(transitionEndScaleY, transitionScaleDurationTime)
+            .SetEase(transitionScaleEase)
+            .OnComplete(() =>
+            {
+                tweenTransitionScale = null;
+                spriteRenderer.transform.localScale = Vector3.one;
+                UpdateSprite();
+            });
+    }
+
+    private void UpdateSprite()
+    {
+        spriteRenderer.sprite = stage.sprite;
+        polygonCollider.UpdateColliderToSprite(stage.sprite);
     }
 
     private void UpdateStateData(PlantState plantState)

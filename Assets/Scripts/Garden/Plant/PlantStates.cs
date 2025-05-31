@@ -25,7 +25,7 @@ public class Growth : PlantState
 {
     public Growth(Plant plant) : base(plant)
     {
-        InitializeGrowth(DateTime.Now);
+        InitializeGrowth(DateTime.Now, true);
         RecoverThirst();
         RecoverPest();
     }
@@ -62,7 +62,7 @@ public class Growth : PlantState
 
         if (plant.Data.GrowthTime.CompareTo(now) <= 0)
         {
-            InitializeGrowth(now);
+            InitializeGrowth(now, true);
         }
     }
 
@@ -88,9 +88,9 @@ public class Growth : PlantState
         return Random.Range(1, 101) <= plant.Item.ChanceOfPest;
     }
 
-    private void InitializeGrowth(DateTime datum)
+    private void InitializeGrowth(DateTime datum, bool animated)
     {
-        plant.SetStage(plant.Item.Stages[plant.Item.Stages.IndexOf(plant.Stage) + 1]);
+        plant.SetStage(plant.Item.Stages[plant.Item.Stages.IndexOf(plant.Stage) + 1], animated);
         int indexNextStage = plant.Item.Stages.IndexOf(plant.Stage) + 1;
         if (indexNextStage <= plant.Item.Stages.Count - 1)
         {
@@ -128,7 +128,7 @@ public class Growth : PlantState
             }
             else if (growthEndTime.CompareTo(now) <= 0)
             {
-                InitializeGrowth(growthEndTime);
+                InitializeGrowth(growthEndTime, false);
             }
         }
     }

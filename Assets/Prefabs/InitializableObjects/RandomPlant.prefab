@@ -82,6 +82,9 @@ MonoBehaviour:
   polygonCollider: {fileID: 7487012035857171157}
   placeableObject: {fileID: 7256910841453029888}
   stateIndicator: {fileID: 8544774232699113801}
+  transitionEndScaleY: 1.1
+  transitionScaleDurationTime: 0.5
+  transitionScaleEase: 28
 --- !u!114 &7256910841453029888 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 63547384130703875, guid: 03d44521cd4ea954eac7344b1e0fbb51, type: 3}
