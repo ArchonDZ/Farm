@@ -5,34 +5,19 @@ using Zenject;
 
 public class GridSystem : MonoBehaviour
 {
-    [SerializeField] private GridLayout gridLayout;
     [SerializeField] private Tilemap tilemap;
     [SerializeField] private TileBase tileBase;
 
     [Inject] private DiContainer diContainer;
 
-    public GridLayout GridLayout => gridLayout;
+    public GridLayout GridLayout => tilemap;
 
     #region Building
-    public GameObject InitializeObjectOnCellPosition(GameObject build, Vector3 position)
-    {
-        position.z = 0;
-        Vector3Int cellPos = gridLayout.WorldToCell(position);
-        Vector3 pos = gridLayout.CellToLocalInterpolated(cellPos) + Vector3.up * gridLayout.cellSize.y / 2f;
-        return InitializeObjectOnPosition(build, pos);
-    }
-
-    public GameObject InitializeObjectOnPosition(GameObject build, Vector3 position)
-    {
-        return diContainer.InstantiatePrefab(build, position, Quaternion.identity, null);
-    }
-
     public T InitializeObjectOnCellPosition<T>(T build, Vector3 position) where T : InitializableObject
     {
         position.z = 0;
-        Vector3Int cellPos = gridLayout.WorldToCell(position);
-        Vector3 pos = gridLayout.CellToLocalInterpolated(cellPos) + 
-            Vector3.up * gridLayout.cellSize.y / 2f + 
+        Vector3Int cellPos = tilemap.WorldToCell(position);
+        Vector3 pos = tilemap.GetCellCenterWorld(cellPos) + 
             Vector3.forward * (cellPos.x + cellPos.y);
 
         return InitializeObjectOnPosition(build, pos);

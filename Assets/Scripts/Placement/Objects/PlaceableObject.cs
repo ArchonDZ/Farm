@@ -15,14 +15,14 @@ public class PlaceableObject : MonoBehaviour
     public bool CanBePlaced()
     {
         BoundsInt areaTemp = area;
-        areaTemp.position = gridSystem.GridLayout.LocalToCell(transform.position);
+        areaTemp.position = gridSystem.GridLayout.WorldToCell(transform.position);
         return gridSystem.CanTakeArea(areaTemp);
     }
 
     public void Place()
     {
         BoundsInt areaTemp = area;
-        areaTemp.position = gridSystem.GridLayout.LocalToCell(transform.position);
+        areaTemp.position = gridSystem.GridLayout.WorldToCell(transform.position);
         gridSystem.TakeArea(areaTemp);
         IsPlaced = true;
         OnPlaceEvent?.Invoke();
@@ -44,7 +44,7 @@ public class PlaceableObject : MonoBehaviour
         if (IsPlaced)
         {
             BoundsInt areaTemp = area;
-            areaTemp.position = gridSystem.GridLayout.LocalToCell(transform.position);
+            areaTemp.position = gridSystem.GridLayout.WorldToCell(transform.position);
             gridSystem.ClearArea(areaTemp);
             IsPlaced = false;
         }
