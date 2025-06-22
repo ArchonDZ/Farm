@@ -38,6 +38,7 @@ public class Plant : InitializableObject
     void Awake()
     {
         placeableObject.Place();
+        placeableObject.OnPlaceEvent += PlaceableObject_OnPlaceEvent;
     }
 
     void Update()
@@ -255,6 +256,11 @@ public class Plant : InitializableObject
         {
             placeableData.State = plantState;
         }
+    }
+
+    private void PlaceableObject_OnPlaceEvent()
+    {
+        placeableData.Position = transform.position;
     }
 
     private void Destroy()

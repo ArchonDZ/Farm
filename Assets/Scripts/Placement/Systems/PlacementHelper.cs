@@ -12,37 +12,65 @@ public class PlacementHelper : MonoBehaviour
 
     [Inject] private Camera mainCamera;
 
+    private Action result;
+    private Action<Action> action;
     private CollectibleObject collectibleObject;
-    private Action action;
+    private PlaceableObject replaceableObject;
 
     public bool CanBePlacedOnTile => placeableObject.CanBePlaced();
 
     void Update()
     {
         UpdatePosition();
-        action.Invoke();
+        action?.Invoke(result);
     }
 
-    public void ActivateForEveryFrame(CollectibleObject collectibleObject, Sprite sprite)
+    public void ActivateCollectibleForEveryFrame(CollectibleObject collectibleObject, Sprite sprite)
     {
         action = EveryFrameInterval;
-        Activate(collectibleObject, sprite);
+        ActivateCollectible(collectibleObject, sprite);
     }
 
-    public void ActivateForMouseUp(CollectibleObject collectibleObject, Sprite sprite)
+    public void ActivateCollectibleForMouseUp(CollectibleObject collectibleObject, Sprite sprite)
     {
         action = MouseUp;
-        Activate(collectibleObject, sprite);
+        ActivateCollectible(collectibleObject, sprite);
+    }
+
+    public void ActivateReplacePlaceable(PlaceableObject placeableObject)
+    {
+        if (!placeableObject.gameObject.TryGetComponent(out SpriteRenderer spriteRenderer)) return;
+
+        replaceableObject = placeableObject;
+        replaceableObject.gameObject.SetActive(false);
+        replaceableObject.Clear();
+
+        action = MouseUp;
+        result = InteractionPlaceableObject;
+        Activate(spriteRenderer.sprite);
+    }
+
+    public void FinishReplacePlaceable()
+    {
+        replaceableObject.Place();
+        replaceableObject.gameObject.SetActive(true);
     }
 
     public void Deactivate()
     {
+        action = null;
         gameObject.SetActive(false);
     }
 
-    private void Activate(CollectibleObject collectibleObject, Sprite sprite)
+    private void ActivateCollectible(CollectibleObject collectibleObject, Sprite sprite)
     {
         this.collectibleObject = collectibleObject;
+        result = InteractionCollectible;
+        Activate(sprite);
+    }
+
+    private void Activate(Sprite sprite)
+    {
         spriteRenderer.sprite = sprite;
         gameObject.SetActive(true);
         UpdatePosition();
@@ -55,7 +83,7 @@ public class PlacementHelper : MonoBehaviour
         transform.position = mousePos;
     }
 
-    private void EveryFrameInterval()
+    private void EveryFrameInterval(Action action)
     {
         if (Input.GetMouseButtonUp(0))
         {
@@ -65,29 +93,48 @@ public class PlacementHelper : MonoBehaviour
 
         if (Time.frameCount % intervalCheck == 0)
         {
-            Raycast();
+            action?.Invoke();
         }
     }
 
-    private void MouseUp()
+    private void MouseUp(Action action)
     {
         if (Input.GetMouseButtonUp(0))
         {
-            Raycast();
+            action?.Invoke();
             Deactivate();
         }
     }
 
-    private void Raycast()
+    private void InteractionCollectible()
+    {
+        if (TryRaycast(out IInteractionPlace interactionPlace))
+        {
+            interactionPlace.Interaction(this, collectibleObject);
+        }
+    }
+
+    private void InteractionPlaceableObject()
+    {
+        if (TryRaycast(out IInteractionPlace interactionPlace))
+        {
+            interactionPlace.Interaction(this, replaceableObject);
+        }
+        else
+        {
+            FinishReplacePlaceable();
+        }
+    }
+
+    private bool TryRaycast(out IInteractionPlace interactionPlace)
     {
         Vector2 dragPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(dragPos, Vector2.zero, float.PositiveInfinity, 1 << layerMaskInteractionPlace);
         if (hit.transform != null)
         {
-            if (hit.transform.TryGetComponent(out IInteractionPlace interactionPlace))
-            {
-                interactionPlace.Interaction(this, collectibleObject);
-            }
+            return hit.transform.TryGetComponent(out interactionPlace);
         }
+        interactionPlace = null;
+        return false;
     }
 }

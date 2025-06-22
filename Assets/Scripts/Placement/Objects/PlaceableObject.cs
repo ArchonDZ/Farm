@@ -1,16 +1,44 @@
+using R3;
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Zenject;
 
-public class PlaceableObject : MonoBehaviour
+public class PlaceableObject : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public event Action OnPlaceEvent;
 
     [SerializeField] private BoundsInt area;
+    [SerializeField] private bool isReplaceable;
+    [SerializeField] private float replacementInterval = 1f;
 
     [Inject] private GridSystem gridSystem;
+    [Inject] private PlacementHelper placementHelper;
+
+    private IDisposable disposableTimerToReplace;
 
     public bool IsPlaced { get; private set; }
+
+    #region IPointerDownHandler
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (isReplaceable)
+        {
+            disposableTimerToReplace = Observable.Timer(TimeSpan.FromSeconds(replacementInterval))
+                .Subscribe((_) => placementHelper.ActivateReplacePlaceable(this));
+        }
+    }
+    #endregion
+
+    #region IPointerUpHandler
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if (isReplaceable)
+        {
+            disposableTimerToReplace?.Dispose();
+        }
+    }
+    #endregion
 
     public bool CanBePlaced()
     {

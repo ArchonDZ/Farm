@@ -18,4 +18,16 @@ public class Seedbed : MonoBehaviour, IInteractionPlace
             }
         }
     }
+
+    public void Interaction(PlacementHelper placementHelper, PlaceableObject placeableObject)
+    {
+        if (!placeableObject.TryGetComponent(out Plant _)) return;
+
+        if (placementHelper.CanBePlacedOnTile)
+        {
+            placeableObject.transform.position = gridSystem.GetGridPosition(placementHelper.transform.position);
+        }
+
+        placementHelper.FinishReplacePlaceable();
+    }
 }

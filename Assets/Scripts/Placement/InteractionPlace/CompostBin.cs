@@ -38,14 +38,31 @@ public class CompostBin : MonoBehaviour, IInteractionPlace, IPointerClickHandler
     {
         if (data.Amount >= maxFillAmount) return;
         if (Time.time - lastInteractionTime < fillInterval) return;
+
         lastInteractionTime = Time.time;
 
         if (collectibleObject.CollectibleItem is SeedCollectibleItem ||
-        collectibleObject.CollectibleItem is CropCollectibleItem)
+            collectibleObject.CollectibleItem is CropCollectibleItem)
         {
             collectibleObject.Spend();
             data.Amount++;
             spriteTransition.Play(collectibleObject.CollectibleItem.Icon, placementHelper.transform.position, Vector3.up, transform.position, Vector3.up, 0.8f);
+        }
+    }
+
+    public void Interaction(PlacementHelper placementHelper, PlaceableObject placeableObject)
+    {
+        if (data.Amount >= maxFillAmount)
+        {
+            placementHelper.FinishReplacePlaceable();
+            return;
+        }
+
+        if (placeableObject.TryGetComponent(out Plant plant))
+        {
+            plant.Dig();
+            data.Amount++;
+            spriteTransition.Play(plant.Stage.sprite, placementHelper.transform.position, Vector3.up, transform.position, Vector3.up, 0.8f);
         }
     }
     #endregion

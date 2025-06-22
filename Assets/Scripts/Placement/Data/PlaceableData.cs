@@ -8,7 +8,7 @@ public class PlaceableData
     [SerializeField] private Vector3 position;
 
     public int Id => id;
-    public Vector3 Position => position;
+    public Vector3 Position { get => position; set => position = value; }
 
     public PlaceableData(int _id, Vector3 _position)
     {

@@ -15,17 +15,19 @@ public class GridSystem : MonoBehaviour
     #region Building
     public T InitializeObjectOnCellPosition<T>(T build, Vector3 position) where T : InitializableObject
     {
-        position.z = 0;
-        Vector3Int cellPos = tilemap.WorldToCell(position);
-        Vector3 pos = tilemap.GetCellCenterWorld(cellPos) + 
-            Vector3.forward * (cellPos.x + cellPos.y);
-
-        return InitializeObjectOnPosition(build, pos);
+        return InitializeObjectOnPosition(build, GetGridPosition(position));
     }
 
     public T InitializeObjectOnPosition<T>(T build, Vector3 position) where T : InitializableObject
     {
         return diContainer.InstantiatePrefabForComponent<T>(build, position, Quaternion.identity, null);
+    }
+
+    public Vector3 GetGridPosition(Vector3 position)
+    {
+        position.z = 0;
+        Vector3Int cellPos = tilemap.WorldToCell(position);
+        return tilemap.GetCellCenterWorld(cellPos) + Vector3.forward * (cellPos.x + cellPos.y);
     }
     #endregion
 

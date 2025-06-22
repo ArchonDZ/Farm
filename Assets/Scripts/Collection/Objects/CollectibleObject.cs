@@ -62,6 +62,6 @@ public class CollectibleObject : MonoBehaviour
 
     private void Dragable_OnLeftCurtainEvent()
     {
-        placementHelper.ActivateForEveryFrame(this, collectiblePackage.CollectibleItem.Icon);
+        placementHelper.ActivateCollectibleForEveryFrame(this, collectiblePackage.CollectibleItem.Icon);
     }
 }
