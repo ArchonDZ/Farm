@@ -40,6 +40,11 @@ public class CollectibleObject : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        dragable.OnLeftCurtainEvent -= Dragable_OnLeftCurtainEvent;
+    }
+
     private void UpdateObject(int count)
     {
         if (count > 0)

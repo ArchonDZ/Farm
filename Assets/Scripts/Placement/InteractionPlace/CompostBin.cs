@@ -30,7 +30,7 @@ public class CompostBin : MonoBehaviour, IInteractionPlace, IPointerClickHandler
             data = new CompostBinData();
             saveSystem.AddSave(data);
         }
-        data.ReactiveAmount.Subscribe(CheckAmount);
+        data.ReactiveAmount.Subscribe(CheckAmount).AddTo(this);
     }
 
     #region IInteractionPlace

@@ -40,6 +40,10 @@ public class PlaceableObject : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     }
     #endregion
 
+    void OnDestroy()
+    {
+        disposableTimerToReplace?.Dispose();
+    }
     public bool CanBePlaced()
     {
         BoundsInt areaTemp = area;

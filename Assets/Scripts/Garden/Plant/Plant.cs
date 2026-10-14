@@ -57,7 +57,7 @@ public class Plant : InitializableObject
         if (savedPlaceableData == null)
         {
             placeableData = new PlantPlaceableData(plantItem.Id, transform.position, state);
-            SetState(new Growth(this));
+            SetState(plantItem.Stages.Count > 1 ? new Growth(this) : new WaitHarvest(this));
             SetStage(plantItem.Stages[0], false);
             collectionSystem.AddPlaceable(placeableData);
         }
@@ -65,7 +65,9 @@ public class Plant : InitializableObject
         {
             placeableData = savedPlaceableData as PlantPlaceableData;
             LoadState(placeableData.State);
-            SetStage(plantItem.Stages[placeableData.Stage], false);
+            int stageIndex = Mathf.Clamp(placeableData.Stage, 0, plantItem.Stages.Count - 1);
+            placeableData.Stage = stageIndex;
+            SetStage(plantItem.Stages[stageIndex], false);
             placeableData.State.Initialize(this);
         }
     }

@@ -90,8 +90,14 @@ public class Growth : PlantState
 
     private void InitializeGrowth(DateTime datum, bool animated)
     {
-        plant.SetStage(plant.Item.Stages[plant.Item.Stages.IndexOf(plant.Stage) + 1], animated);
-        int indexNextStage = plant.Item.Stages.IndexOf(plant.Stage) + 1;
+        int nextStageIndex = plant.Item.Stages.IndexOf(plant.Stage) + 1;
+
+        if (nextStageIndex <= plant.Item.Stages.Count - 1)
+        {
+            plant.SetStage(plant.Item.Stages[nextStageIndex], animated);
+        }
+
+        int indexNextStage = nextStageIndex + 1;
         if (indexNextStage <= plant.Item.Stages.Count - 1)
         {
             PlantStage nextStage = plant.Item.Stages[indexNextStage];
@@ -116,12 +122,19 @@ public class Growth : PlantState
             DateTime growthEndTime = plant.Data.GrowthTime;
 
             if (pestEndTime.CompareTo(now) <= 0 && pestEndTime.CompareTo(thirstEndTime) <= 0 &&
-                pestEndTime.CompareTo(growthEndTime) <= 0 && ChanceOfPest())
+                pestEndTime.CompareTo(growthEndTime) <= 0)
             {
-                plant.SetState(new Pest(plant, this));
-                break;
+                if (ChanceOfPest())
+                {
+                    plant.SetState(new Pest(plant, this));
+                    break;
+                }
+
+                RecoverPest();
+                pestEndTime = plant.Data.PestTime;
             }
-            else if (thirstEndTime.CompareTo(now) <= 0 && thirstEndTime.CompareTo(growthEndTime) <= 0)
+
+            if (thirstEndTime.CompareTo(now) <= 0 && thirstEndTime.CompareTo(growthEndTime) <= 0)
             {
                 plant.SetState(new Thirst(plant, this));
                 break;

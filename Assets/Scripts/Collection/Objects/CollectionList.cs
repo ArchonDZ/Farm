@@ -25,6 +25,11 @@ public class CollectionList : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        collectionSystem.OnCollectibleAddEvent -= OnCollectibleAddEvent;
+    }
+
     private void OnCollectibleAddEvent(CollectiblePackage collectiblePackage)
     {
         if (collectionSystem.CheckComplianceConfig(loadConfig, collectiblePackage))

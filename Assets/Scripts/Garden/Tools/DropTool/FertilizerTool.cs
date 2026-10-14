@@ -21,7 +21,7 @@ public class FertilizerTool : DropTool
         if (collectionSystem.TryGetCollectibleData(collectibleItem, out CollectibleData collectibleData))
         {
             data = collectibleData;
-            data.Count.Subscribe(CheckRemainCount);
+            data.Count.Subscribe(CheckRemainCount).AddTo(this);
         }
     }
 
