@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d199464cbadc30449a6bfc6a03bace8, type: 3}
+  m_Name: TomatoPlant
+  m_EditorClassIdentifier: 
+  Id: 1003
+  InitializableObject: {fileID: 3216736138069626618, guid: 03d44521cd4ea954eac7344b1e0fbb51, type: 3}
+  FertilizerMultiplier: 1
+  FertilizeTime:
+    Days: 0
+    Hours: 0
+    Minutes: 0
+    Seconds: 10
+  ChanceOfPest: 0
+  PestTime:
+    Days: 0
+    Hours: 0
+    Minutes: 0
+    Seconds: 0
+  ThirstTime:
+    Days: 0
+    Hours: 0
+    Minutes: 0
+    Seconds: 15
+  Stages:
+  - timeGrowth:
+      Days: 0
+      Hours: 0
+      Minutes: 0
+      Seconds: 5
+    sprite: {fileID: -384858432, guid: d7b446de87238ee42bf1fba45bf567d2, type: 3}
+  - timeGrowth:
+      Days: 0
+      Hours: 0
+      Minutes: 0
+      Seconds: 5
+    sprite: {fileID: -1495710941, guid: d7b446de87238ee42bf1fba45bf567d2, type: 3}
+  - timeGrowth:
+      Days: 0
+      Hours: 0
+      Minutes: 0
+      Seconds: 10
+    sprite: {fileID: 155269419, guid: d7b446de87238ee42bf1fba45bf567d2, type: 3}
+  - timeGrowth:
+      Days: 0
+      Hours: 0
+      Minutes: 0
+      Seconds: 10
+    sprite: {fileID: 195529811, guid: d7b446de87238ee42bf1fba45bf567d2, type: 3}
+  - timeGrowth:
+      Days: 0
+      Hours: 0
+      Minutes: 0
+      Seconds: 15
+    sprite: {fileID: -2032804466, guid: d7b446de87238ee42bf1fba45bf567d2, type: 3}
+  - timeGrowth:
+      Days: 0
+      Hours: 0
+      Minutes: 0
+      Seconds: 15
+    sprite: {fileID: 1216495096, guid: d7b446de87238ee42bf1fba45bf567d2, type: 3}
+  DefinitelyDrops:
+  - Count: 1
+    CollectibleItem: {fileID: 11400000, guid: 5f8c2d4885055bb49a165ea2b5803973, type: 2}
+  CountRandomDrop: 1
+  RandomDrop:
+    Values:
+    - Weight: 1
+      Item:
+        Count: 1
+        CollectibleItem: {fileID: 11400000, guid: 560907c2a32388f45a1c2dc48cc765e4, type: 2}
+    - Weight: 2
+      Item:
+        Count: 1
+        CollectibleItem: {fileID: 11400000, guid: 82ca69024f03d494f92fc65754284057, type: 2}

@@ -47,9 +47,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stateSpriteRenderer: {fileID: 8403509629956726973}
-  spriteThirst: {fileID: 21300000, guid: 3982448fbfc85fe41bb904c74c9676b4, type: 3}
-  spritePest: {fileID: 21300000, guid: 1f4acb66e98b3f948aea20ad95d4e98b, type: 3}
-  spriteHarvest: {fileID: 21300000, guid: be2201f6939bcff4383167415a4e1025, type: 3}
+  spriteThirst: {fileID: 1593936646, guid: 72ea277179762f04786b2a0b208e0c09, type: 3}
+  spritePest: {fileID: 2097376109, guid: 72ea277179762f04786b2a0b208e0c09, type: 3}
+  spriteHarvest: {fileID: 730963007, guid: 72ea277179762f04786b2a0b208e0c09, type: 3}
   particleFertilizedState: {fileID: 3270607037899645178}
 --- !u!1 &4611049578492767100
 GameObject:
@@ -287,8 +287,8 @@ Transform:
   m_GameObject: {fileID: 9009390609387873145}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.4, y: 0.5, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalPosition: {x: 0.35, y: 0.35, z: 0}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 5049378060388399274}

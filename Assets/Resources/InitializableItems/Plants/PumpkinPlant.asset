@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d199464cbadc30449a6bfc6a03bace8, type: 3}
+  m_Name: PumpkinPlant
+  m_EditorClassIdentifier: 
+  Id: 1005
+  InitializableObject: {fileID: 3216736138069626618, guid: 03d44521cd4ea954eac7344b1e0fbb51, type: 3}
+  FertilizerMultiplier: 1
+  FertilizeTime:
+    Days: 0
+    Hours: 0
+    Minutes: 0
+    Seconds: 10
+  ChanceOfPest: 0
+  PestTime:
+    Days: 0
+    Hours: 0
+    Minutes: 0
+    Seconds: 0
+  ThirstTime:
+    Days: 0
+    Hours: 0
+    Minutes: 0
+    Seconds: 20
+  Stages:
+  - timeGrowth:
+      Days: 0
+      Hours: 0
+      Minutes: 0
+      Seconds: 5
+    sprite: {fileID: 1842721492, guid: 5aa41e7ee83ecc9408b101b3b52d0360, type: 3}
+  - timeGrowth:
+      Days: 0
+      Hours: 0
+      Minutes: 0
+      Seconds: 5
+    sprite: {fileID: -711740201, guid: 5aa41e7ee83ecc9408b101b3b52d0360, type: 3}
+  - timeGrowth:
+      Days: 0
+      Hours: 0
+      Minutes: 0
+      Seconds: 10
+    sprite: {fileID: -2146538786, guid: 5aa41e7ee83ecc9408b101b3b52d0360, type: 3}
+  - timeGrowth:
+      Days: 0
+      Hours: 0
+      Minutes: 0
+      Seconds: 10
+    sprite: {fileID: -377431139, guid: 5aa41e7ee83ecc9408b101b3b52d0360, type: 3}
+  - timeGrowth:
+      Days: 0
+      Hours: 0
+      Minutes: 0
+      Seconds: 15
+    sprite: {fileID: -1468767675, guid: 5aa41e7ee83ecc9408b101b3b52d0360, type: 3}
+  - timeGrowth:
+      Days: 0
+      Hours: 0
+      Minutes: 0
+      Seconds: 15
+    sprite: {fileID: -1727409398, guid: 5aa41e7ee83ecc9408b101b3b52d0360, type: 3}
+  DefinitelyDrops:
+  - Count: 1
+    CollectibleItem: {fileID: 11400000, guid: 0d5067e3204a177418bccf7f0a67484c, type: 2}
+  CountRandomDrop: 2
+  RandomDrop:
+    Values:
+    - Weight: 1
+      Item:
+        Count: 1
+        CollectibleItem: {fileID: 11400000, guid: 560907c2a32388f45a1c2dc48cc765e4, type: 2}
+    - Weight: 2
+      Item:
+        Count: 1
+        CollectibleItem: {fileID: 11400000, guid: 48eebe71e305da34bbd00281256734e8, type: 2}

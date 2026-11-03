@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewPlantItem", menuName = "Farm/InitializableItem/PlantItem")]
+[CreateAssetMenu(fileName = "NewPlantItem", menuName = "Farm/InitializableItem/Plants/PlantItem")]
 public class PlantItem : InitializableItem
 {
     [Header("PlantItem")]

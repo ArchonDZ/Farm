@@ -1,5 +1,6 @@
 using R3;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
@@ -12,6 +13,8 @@ public class CompostBin : MonoBehaviour, IInteractionPlace, IPointerClickHandler
     [SerializeField] private SpriteTransition spriteTransition;
     [SerializeField] private CollectibleItem fertilizerCollectibleItem;
     [SerializeField] private ParticleSystem particle;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private List<Sprite> stages = new List<Sprite>();
 
     [Inject] private SaveSystem saveSystem;
     [Inject] private CollectionSystem collectionSystem;
@@ -87,6 +90,14 @@ public class CompostBin : MonoBehaviour, IInteractionPlace, IPointerClickHandler
             fullIndicator.SetActive(true);
             particle.Play();
         }
+        SetStage(amount);
+    }
+
+    private void SetStage(int amount)
+    {
+        int index = Mathf.Clamp(amount, 0, maxFillAmount);
+        if (stages != null && stages.Count > 0 && index < stages.Count)
+            spriteRenderer.sprite = stages[index];
     }
 
     #region Data

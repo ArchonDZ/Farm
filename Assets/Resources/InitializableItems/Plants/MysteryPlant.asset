@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 215f942ff7b217942a0846916d1e75de, type: 3}
+  m_Name: MysteryPlant
+  m_EditorClassIdentifier: 
+  Id: 1001
+  InitializableObject: {fileID: 8573490449591990650, guid: c0da21c8b12701640ab520b6a7a29565, type: 3}
+  Plants:
+  - {fileID: 11400000, guid: 86d820a62739b4848806e5b49ed616a9, type: 2}
+  - {fileID: 11400000, guid: bf03d9795fe96d048a22977fdd7ec650, type: 2}
+  - {fileID: 11400000, guid: 626494fc6e47ae642a71620680f92ce5, type: 2}
+  - {fileID: 11400000, guid: 417ae1f7bb14f884591d8c5d22b17a29, type: 2}
