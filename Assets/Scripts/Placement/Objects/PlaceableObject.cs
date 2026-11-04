@@ -18,6 +18,7 @@ public class PlaceableObject : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     private IDisposable disposableTimerToReplace;
 
     public bool IsPlaced { get; private set; }
+    public BoundsInt Area => area;
 
     #region IPointerDownHandler
     public void OnPointerDown(PointerEventData eventData)
@@ -44,6 +45,7 @@ public class PlaceableObject : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     {
         disposableTimerToReplace?.Dispose();
     }
+
     public bool CanBePlaced()
     {
         BoundsInt areaTemp = area;

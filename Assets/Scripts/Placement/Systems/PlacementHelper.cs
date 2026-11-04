@@ -9,15 +9,17 @@ public class PlacementHelper : MonoBehaviour
     [SerializeField] private int layerMaskInteractionPlace = 7;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private PlaceableObject placeableObject;
+    [SerializeField] private PlacementPreview placementPreview;
 
     [Inject] private Camera mainCamera;
 
     private Action result;
     private Action<Action> action;
+    private Func<bool> canPlace;
     private CollectibleObject collectibleObject;
     private PlaceableObject replaceableObject;
 
-    public bool CanBePlacedOnTile => placeableObject.CanBePlaced();
+    public bool CanBePlacedOnTile => canPlace?.Invoke() ?? false;
 
     void Update()
     {
@@ -46,8 +48,10 @@ public class PlacementHelper : MonoBehaviour
         replaceableObject.Clear();
 
         action = MouseUp;
+        canPlace = replaceableObject.CanBePlaced;
         result = InteractionPlaceableObject;
         Activate(spriteRenderer.sprite);
+        EnablePreview();
     }
 
     public void FinishReplacePlaceable()
@@ -59,12 +63,15 @@ public class PlacementHelper : MonoBehaviour
     public void Deactivate()
     {
         action = null;
+        canPlace = null;
+        result = null;
         gameObject.SetActive(false);
     }
 
     private void ActivateCollectible(CollectibleObject collectibleObject, Sprite sprite)
     {
         this.collectibleObject = collectibleObject;
+        canPlace = placeableObject.CanBePlaced;
         result = InteractionCollectible;
         Activate(sprite);
     }
@@ -124,6 +131,7 @@ public class PlacementHelper : MonoBehaviour
         {
             FinishReplacePlaceable();
         }
+        DisablePreview();
     }
 
     private bool TryRaycast(out IInteractionPlace interactionPlace)
@@ -136,5 +144,17 @@ public class PlacementHelper : MonoBehaviour
         }
         interactionPlace = null;
         return false;
+    }
+
+    private void EnablePreview()
+    {
+        if (placementPreview != null && replaceableObject != null)
+            placementPreview.Enable(replaceableObject);
+    }
+
+    private void DisablePreview()
+    {
+        if (placementPreview != null)
+            placementPreview.Disable();
     }
 }
