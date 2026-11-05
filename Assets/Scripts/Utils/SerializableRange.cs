@@ -4,15 +4,15 @@ using UnityEngine;
 [Serializable]
 public struct SerializableRange
 {
-    [SerializeField] [Min(1)] private int start;
-    [SerializeField] [Min(0)] private int length;
+	[SerializeField][Min(1)] private int _start;
+	[SerializeField][Min(0)] private int _length;
 
-    public int Start => start;
-    public int End => start + length;
+	public readonly int Start => _start;
+	public readonly int End => _start + _length;
 
-    public SerializableRange(int start, int length)
-    {
-        this.start = start;
-        this.length = length;
-    }
+	public SerializableRange(int start, int length)
+	{
+		_start = start;
+		_length = length;
+	}
 }

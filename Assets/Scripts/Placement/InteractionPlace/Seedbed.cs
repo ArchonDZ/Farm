@@ -3,31 +3,31 @@ using Zenject;
 
 public class Seedbed : MonoBehaviour, IInteractionPlace
 {
-    [Inject] private GridSystem gridSystem;
-    [Inject] private Camera mainCamera;
+	[Inject] private readonly GridSystem _gridSystem;
+	[Inject] private readonly Camera _mainCamera;
 
-    public void Interaction(PlacementHelper placementHelper, CollectibleObject collectibleObject)
-    {
-        if (collectibleObject.CollectibleItem is SeedCollectibleItem seedCollectibleItem)
-        {
-            if (placementHelper.CanBePlacedOnTile)
-            {
-                collectibleObject.Spend();
-                gridSystem.InitializeObjectOnCellPosition(seedCollectibleItem.InitializableItem.InitializableObject, mainCamera.ScreenToWorldPoint(Input.mousePosition))
-                        .Initialize(seedCollectibleItem.InitializableItem, null);
-            }
-        }
-    }
+	public void Interaction(PlacementHelper placementHelper, CollectibleObject collectibleObject)
+	{
+		if (collectibleObject.CollectibleItem is SeedCollectibleItem seedCollectibleItem)
+		{
+			if (placementHelper.CanBePlacedOnTile)
+			{
+				collectibleObject.Spend();
+				_gridSystem.InitializeObjectOnCellPosition(seedCollectibleItem.InitializableItem.InitializableObject, _mainCamera.ScreenToWorldPoint(Input.mousePosition))
+						.Initialize(seedCollectibleItem.InitializableItem, null);
+			}
+		}
+	}
 
-    public void Interaction(PlacementHelper placementHelper, PlaceableObject placeableObject)
-    {
-        if (!placeableObject.TryGetComponent(out Plant _)) return;
+	public void Interaction(PlacementHelper placementHelper, PlaceableObject placeableObject)
+	{
+		if (!placeableObject.TryGetComponent(out Plant _)) return;
 
-        if (placementHelper.CanBePlacedOnTile)
-        {
-            placeableObject.transform.position = gridSystem.GetGridPosition(placementHelper.transform.position);
-        }
+		if (placementHelper.CanBePlacedOnTile)
+		{
+			placeableObject.transform.position = _gridSystem.GetGridPosition(placementHelper.transform.position);
+		}
 
-        placementHelper.FinishReplacePlaceable();
-    }
+		placementHelper.FinishReplacePlaceable();
+	}
 }

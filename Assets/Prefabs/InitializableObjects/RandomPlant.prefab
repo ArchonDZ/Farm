@@ -78,13 +78,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ec226abc3288e24f911f43c00b0828d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteRenderer: {fileID: 8471485407430857440}
-  polygonCollider: {fileID: 7487012035857171157}
-  placeableObject: {fileID: 7256910841453029888}
-  stateIndicator: {fileID: 8544774232699113801}
-  transitionEndScaleY: 1.1
-  transitionScaleDurationTime: 0.5
-  transitionScaleEase: 28
+  _spriteRenderer: {fileID: 8471485407430857440}
+  _polygonCollider: {fileID: 7487012035857171157}
+  _placeableObject: {fileID: 7256910841453029888}
+  _stateIndicator: {fileID: 8544774232699113801}
+  _transitionEndScaleY: 1.1
+  _transitionScaleDurationTime: 0.5
+  _transitionScaleEase: 28
 --- !u!114 &7256910841453029888 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 63547384130703875, guid: 03d44521cd4ea954eac7344b1e0fbb51, type: 3}

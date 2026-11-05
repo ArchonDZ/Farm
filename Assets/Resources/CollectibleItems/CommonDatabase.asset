@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 378751cdde6322644bf7531f9fb40152, type: 3}
   m_Name: CommonDatabase
   m_EditorClassIdentifier: 
-  collectibleType: 1
-  collectibleItemList:
+  _collectibleType: 1
+  _collectibleItemList:
   - {fileID: 11400000, guid: 689ab2c1b45770e48a71a6f97b50c241, type: 2}

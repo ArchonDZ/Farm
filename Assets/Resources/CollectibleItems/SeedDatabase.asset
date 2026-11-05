@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 378751cdde6322644bf7531f9fb40152, type: 3}
   m_Name: SeedDatabase
   m_EditorClassIdentifier: 
-  collectibleType: 2
-  collectibleItemList:
+  _collectibleType: 2
+  _collectibleItemList:
+  - {fileID: 11400000, guid: 0e593ee0972650b45a4b273da18a05f4, type: 2}
   - {fileID: 11400000, guid: 560907c2a32388f45a1c2dc48cc765e4, type: 2}
   - {fileID: 11400000, guid: 50446a642a36145409a30dfbacc4df8a, type: 2}
-  - {fileID: 11400000, guid: 82ca69024f03d494f92fc65754284057, type: 2}
-  - {fileID: 11400000, guid: 0e593ee0972650b45a4b273da18a05f4, type: 2}
   - {fileID: 11400000, guid: 48eebe71e305da34bbd00281256734e8, type: 2}
+  - {fileID: 11400000, guid: 82ca69024f03d494f92fc65754284057, type: 2}

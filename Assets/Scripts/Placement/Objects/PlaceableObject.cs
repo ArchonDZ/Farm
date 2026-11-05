@@ -6,81 +6,81 @@ using Zenject;
 
 public class PlaceableObject : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    public event Action OnPlaceEvent;
+	public event Action OnPlaceEvent;
 
-    [SerializeField] private BoundsInt area;
-    [SerializeField] private bool isReplaceable;
-    [SerializeField] private float replacementInterval = 1f;
+	[SerializeField] private BoundsInt _area = new(Vector3Int.zero, Vector3Int.one);
+	[SerializeField] private bool _isReplaceable;
+	[SerializeField] private float _replacementInterval = 1f;
 
-    [Inject] private GridSystem gridSystem;
-    [Inject] private PlacementHelper placementHelper;
+	[Inject] private readonly GridSystem _gridSystem;
+	[Inject] private readonly PlacementHelper _placementHelper;
 
-    private IDisposable disposableTimerToReplace;
+	private IDisposable _disposableTimerToReplace;
 
-    public bool IsPlaced { get; private set; }
-    public BoundsInt Area => area;
+	public bool IsPlaced { get; private set; }
+	public BoundsInt Area => _area;
 
-    #region IPointerDownHandler
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        if (isReplaceable)
-        {
-            disposableTimerToReplace = Observable.Timer(TimeSpan.FromSeconds(replacementInterval))
-                .Subscribe((_) => placementHelper.ActivateReplacePlaceable(this));
-        }
-    }
-    #endregion
+	#region IPointerDownHandler
+	public void OnPointerDown(PointerEventData eventData)
+	{
+		if (_isReplaceable)
+		{
+			_disposableTimerToReplace = Observable.Timer(TimeSpan.FromSeconds(_replacementInterval))
+				.Subscribe((_) => _placementHelper.ActivateReplacePlaceable(this));
+		}
+	}
+	#endregion
 
-    #region IPointerUpHandler
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        if (isReplaceable)
-        {
-            disposableTimerToReplace?.Dispose();
-        }
-    }
-    #endregion
+	#region IPointerUpHandler
+	public void OnPointerUp(PointerEventData eventData)
+	{
+		if (_isReplaceable)
+		{
+			_disposableTimerToReplace?.Dispose();
+		}
+	}
+	#endregion
 
-    void OnDestroy()
-    {
-        disposableTimerToReplace?.Dispose();
-    }
+	void OnDestroy()
+	{
+		_disposableTimerToReplace?.Dispose();
+	}
 
-    public bool CanBePlaced()
-    {
-        BoundsInt areaTemp = area;
-        areaTemp.position = gridSystem.GridLayout.WorldToCell(transform.position);
-        return gridSystem.CanTakeArea(areaTemp);
-    }
+	public bool CanBePlaced()
+	{
+		BoundsInt areaTemp = _area;
+		areaTemp.position = _gridSystem.GridLayout.WorldToCell(transform.position);
+		return _gridSystem.CanTakeArea(areaTemp);
+	}
 
-    public void Place()
-    {
-        BoundsInt areaTemp = area;
-        areaTemp.position = gridSystem.GridLayout.WorldToCell(transform.position);
-        gridSystem.TakeArea(areaTemp);
-        IsPlaced = true;
-        OnPlaceEvent?.Invoke();
-    }
+	public void Place()
+	{
+		BoundsInt areaTemp = _area;
+		areaTemp.position = _gridSystem.GridLayout.WorldToCell(transform.position);
+		_gridSystem.TakeArea(areaTemp);
+		IsPlaced = true;
+		OnPlaceEvent?.Invoke();
+	}
 
-    public bool TryPlace()
-    {
-        if (CanBePlaced())
-        {
-            Place();
-            return true;
-        }
+	public bool TryPlace()
+	{
+		if (CanBePlaced())
+		{
+			Place();
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    public void Clear()
-    {
-        if (IsPlaced)
-        {
-            BoundsInt areaTemp = area;
-            areaTemp.position = gridSystem.GridLayout.WorldToCell(transform.position);
-            gridSystem.ClearArea(areaTemp);
-            IsPlaced = false;
-        }
-    }
+	public void Clear()
+	{
+		if (IsPlaced)
+		{
+			BoundsInt areaTemp = _area;
+			areaTemp.position = _gridSystem.GridLayout.WorldToCell(transform.position);
+			_gridSystem.ClearArea(areaTemp);
+			IsPlaced = false;
+		}
+	}
 }

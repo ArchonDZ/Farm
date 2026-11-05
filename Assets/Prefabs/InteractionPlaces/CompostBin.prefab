@@ -136,14 +136,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f8c0e68be1864f4c80d47245351c08b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxFillAmount: 3
-  fillInterval: 1
-  fullIndicator: {fileID: 4211473241275541998}
-  spriteTransition: {fileID: 7343097901136549766}
-  fertilizerCollectibleItem: {fileID: 11400000, guid: 689ab2c1b45770e48a71a6f97b50c241, type: 2}
-  particle: {fileID: 6049550184527002512}
-  spriteRenderer: {fileID: 9164066046946294246}
-  stages:
+  _maxFillAmount: 3
+  _fillInterval: 1
+  _fullIndicator: {fileID: 4211473241275541998}
+  _spriteTransition: {fileID: 7343097901136549766}
+  _fertilizerCollectibleItem: {fileID: 11400000, guid: 689ab2c1b45770e48a71a6f97b50c241, type: 2}
+  _particle: {fileID: 6049550184527002512}
+  _spriteRenderer: {fileID: 9164066046946294246}
+  _stages:
   - {fileID: 1913242181, guid: e1eba5a388f60c342a03874b497363c6, type: 3}
   - {fileID: 414614713, guid: e1eba5a388f60c342a03874b497363c6, type: 3}
   - {fileID: 2020996698, guid: e1eba5a388f60c342a03874b497363c6, type: 3}
@@ -329,7 +329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbb0ab8170382a64ebbcdb16583b500e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteRenderer: {fileID: 8549845473457897252}
+  _spriteRenderer: {fileID: 8549845473457897252}
 --- !u!1 &8320674417609515352
 GameObject:
   m_ObjectHideFlags: 0

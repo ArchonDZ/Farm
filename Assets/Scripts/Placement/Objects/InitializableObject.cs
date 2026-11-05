@@ -2,6 +2,6 @@ using UnityEngine;
 
 public abstract class InitializableObject : MonoBehaviour
 {
-    // call after Awake
-    public abstract void Initialize(InitializableItem initializableItem, PlaceableData placeableData);
+	// call after Awake
+	public abstract void Initialize(InitializableItem initializableItem, PlaceableData placeableData);
 }

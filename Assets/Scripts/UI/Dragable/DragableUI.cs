@@ -5,39 +5,39 @@ using UnityEngine.UI;
 
 public class DragableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    public event Action OnBeginDragEvent;
-    public event Action OnEndDragEvent;
+	public event Action OnBeginDragEvent;
+	public event Action OnEndDragEvent;
 
-    [SerializeField] protected Image dragableImage;
+	[SerializeField] protected Image _dragableImage;
 
-    private Canvas canvas;
-    private Vector3 originPos;
+	private Canvas _canvas;
+	private Vector3 _originPos;
 
-    public bool IsDragging { get; private set; }
+	public bool IsDragging { get; private set; }
 
-    void Awake()
-    {
-        canvas = GetComponentInParent<Canvas>();
-    }
+	void Awake()
+	{
+		_canvas = GetComponentInParent<Canvas>();
+	}
 
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        IsDragging = true;
-        dragableImage.maskable = false;
-        originPos = dragableImage.rectTransform.anchoredPosition;
-        OnBeginDragEvent?.Invoke();
-    }
+	public void OnBeginDrag(PointerEventData eventData)
+	{
+		IsDragging = true;
+		_dragableImage.maskable = false;
+		_originPos = _dragableImage.rectTransform.anchoredPosition;
+		OnBeginDragEvent?.Invoke();
+	}
 
-    public virtual void OnDrag(PointerEventData eventData)
-    {
-        dragableImage.rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
-    }
+	public virtual void OnDrag(PointerEventData eventData)
+	{
+		_dragableImage.rectTransform.anchoredPosition += eventData.delta / _canvas.scaleFactor;
+	}
 
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        IsDragging = false;
-        dragableImage.maskable = true;
-        dragableImage.rectTransform.anchoredPosition = originPos;
-        OnEndDragEvent?.Invoke();
-    }
+	public void OnEndDrag(PointerEventData eventData)
+	{
+		IsDragging = false;
+		_dragableImage.maskable = true;
+		_dragableImage.rectTransform.anchoredPosition = _originPos;
+		OnEndDragEvent?.Invoke();
+	}
 }

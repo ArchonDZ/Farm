@@ -46,11 +46,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d96656d3e0ed347449e638c41da5134d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stateSpriteRenderer: {fileID: 8403509629956726973}
-  spriteThirst: {fileID: 1593936646, guid: 72ea277179762f04786b2a0b208e0c09, type: 3}
-  spritePest: {fileID: 2097376109, guid: 72ea277179762f04786b2a0b208e0c09, type: 3}
-  spriteHarvest: {fileID: 730963007, guid: 72ea277179762f04786b2a0b208e0c09, type: 3}
-  particleFertilizedState: {fileID: 3270607037899645178}
+  _stateSpriteRenderer: {fileID: 8403509629956726973}
+  _spriteThirst: {fileID: 1593936646, guid: 72ea277179762f04786b2a0b208e0c09, type: 3}
+  _spritePest: {fileID: 2097376109, guid: 72ea277179762f04786b2a0b208e0c09, type: 3}
+  _spriteHarvest: {fileID: 730963007, guid: 72ea277179762f04786b2a0b208e0c09, type: 3}
+  _particleFertilizedState: {fileID: 3270607037899645178}
 --- !u!1 &4611049578492767100
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,11 +237,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bd2b6edc4cdd6546b9827258c91457e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  area:
+  _area:
     m_Position: {x: 0, y: 0, z: 0}
     m_Size: {x: 1, y: 1, z: 1}
-  isReplaceable: 1
-  replacementInterval: 1
+  _isReplaceable: 1
+  _replacementInterval: 1
 --- !u!114 &3216736138069626618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,13 +254,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4853f96b6582ba4088cf7c36c8b24c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteRenderer: {fileID: 1280358116565412579}
-  polygonCollider: {fileID: 266636187440937686}
-  placeableObject: {fileID: 63547384130703875}
-  stateIndicator: {fileID: 1351465885629950282}
-  transitionEndScaleY: 1.1
-  transitionScaleDurationTime: 0.5
-  transitionScaleEase: 28
+  _spriteRenderer: {fileID: 1280358116565412579}
+  _polygonCollider: {fileID: 266636187440937686}
+  _placeableObject: {fileID: 63547384130703875}
+  _stateIndicator: {fileID: 1351465885629950282}
+  _transitionEndScaleY: 1.1
+  _transitionScaleDurationTime: 0.5
+  _transitionScaleEase: 28
 --- !u!1 &9009390609387873145
 GameObject:
   m_ObjectHideFlags: 0

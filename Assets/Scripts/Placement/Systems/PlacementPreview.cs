@@ -4,66 +4,66 @@ using Zenject;
 
 public class PlacementPreview : MonoBehaviour
 {
-    [SerializeField] private Tilemap highlight;
-    [SerializeField] private TileBase highlightTile;
+	[SerializeField] private Tilemap _highlight;
+	[SerializeField] private TileBase _highlightTile;
 
-    [Inject] private GridSystem gridSystem;
+	[Inject] private readonly GridSystem _gridSystem;
 
-    private PlaceableObject replaceableObject;
+	private PlaceableObject _replaceableObject;
 
-    void Awake()
-    {
-        enabled = false;
-    }
+	void Awake()
+	{
+		enabled = false;
+	}
 
-    public void Enable(PlaceableObject placeableObject)
-    {
-        replaceableObject = placeableObject;
-        enabled = true;
-    }
+	public void Enable(PlaceableObject placeableObject)
+	{
+		_replaceableObject = placeableObject;
+		enabled = true;
+	}
 
-    public void Disable()
-    {
-        enabled = false;
-    }
+	public void Disable()
+	{
+		enabled = false;
+	}
 
-    private void Update()
-    {
-        if (replaceableObject == null) return;
+	private void Update()
+	{
+		if (_replaceableObject == null) return;
 
-        ClearPreview();
+		ClearPreview();
 
-        BoundsInt areaTemp = replaceableObject.Area;
-        areaTemp.position = gridSystem.GridLayout.WorldToCell(transform.position);
-        bool canPlace = gridSystem.CanTakeArea(areaTemp);
+		BoundsInt areaTemp = _replaceableObject.Area;
+		areaTemp.position = _gridSystem.GridLayout.WorldToCell(transform.position);
+		bool canPlace = _gridSystem.CanTakeArea(areaTemp);
 
-        Color color = canPlace
-            ? new Color(0.2f, 1f, 0.2f, 0.45f)
-            : new Color(1f, 0.2f, 0.2f, 0.45f);
+		Color color = canPlace
+			? new Color(0.2f, 1f, 0.2f, 0.45f)
+			: new Color(1f, 0.2f, 0.2f, 0.45f);
 
-        for (int x = 0; x < areaTemp.size.x; x++)
-        {
-            for (int y = 0; y < areaTemp.size.y; y++)
-            {
-                Vector3Int cell = areaTemp.position + new Vector3Int(x, y, 0);
+		for (int x = 0; x < areaTemp.size.x; x++)
+		{
+			for (int y = 0; y < areaTemp.size.y; y++)
+			{
+				Vector3Int cell = areaTemp.position + new Vector3Int(x, y, 0);
 
-                highlight.SetTile(cell, highlightTile);
-                highlight.SetTileFlags(
-                    cell,
-                    highlight.GetTileFlags(cell) & ~TileFlags.LockColor
-                );
-                highlight.SetColor(cell, color);
-            }
-        }
-    }
+				_highlight.SetTile(cell, _highlightTile);
+				_highlight.SetTileFlags(
+					cell,
+					_highlight.GetTileFlags(cell) & ~TileFlags.LockColor
+				);
+				_highlight.SetColor(cell, color);
+			}
+		}
+	}
 
-    private void ClearPreview()
-    {
-        highlight.ClearAllTiles();
-    }
+	private void ClearPreview()
+	{
+		_highlight.ClearAllTiles();
+	}
 
-    private void OnDisable()
-    {
-        ClearPreview();
-    }
+	private void OnDisable()
+	{
+		ClearPreview();
+	}
 }

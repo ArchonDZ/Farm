@@ -7,173 +7,174 @@ using Zenject;
 
 public class CollectionSystem : MonoBehaviour
 {
-    public event Action<CollectiblePackage> OnCollectibleAddEvent;
+	public event Action<CollectiblePackage> OnCollectibleAddEvent;
 
-    #region Databases
-    private List<CollectibleDatabase> collectibleDatabaseList;
-    private List<CollectibleItem> collectibleItems = new List<CollectibleItem>();
-    private List<InitializableItem> initializableItemList;
-    #endregion
+	#region Databases
+	private List<CollectibleDatabase> _collectibleDatabaseList;
+	private readonly List<CollectibleItem> _collectibleItems = new();
+	private List<InitializableItem> _initializableItemList;
+	#endregion
 
-    #region Data
-    private List<CollectibleData> collectibleDataList;
-    private List<CollectiblePackage> collectiblePackages = new List<CollectiblePackage>();
-    private List<PlaceableData> placeableDataList;
-    #endregion
+	#region Data
+	private List<CollectibleData> _collectibleDataList;
+	private readonly List<CollectiblePackage> _collectiblePackages = new();
+	private List<PlaceableData> _placeableDataList;
+	#endregion
 
-    [Inject] private GridSystem gridSystem;
+	[Inject] private readonly GridSystem _gridSystem;
 
-    void Awake()
-    {
-        Load();
-    }
+	void Awake()
+	{
+		Load();
+	}
 
-    void OnDisable()
-    {
-        Save();
-    }
+	void OnDisable()
+	{
+		Save();
+	}
 
-    public void AddDrops(List<Drop> drops)
-    {
-        for (int i = 0; i < drops.Count; i++)
-        {
-            AddDrop(drops[i]);
-        }
-    }
+	public void AddDrops(List<Drop> drops)
+	{
+		for (int i = 0; i < drops.Count; i++)
+		{
+			AddDrop(drops[i]);
+		}
+	}
 
-    public void AddDrop(Drop drop)
-    {
-        if (drop == null) return;
-        if (drop.CollectibleItem == null) return;
+	public void AddDrop(Drop drop)
+	{
+		if (drop == null) return;
+		if (drop.CollectibleItem == null) return;
 
-        int collectibleDataIndex = collectibleDataList.FindIndex(x => x.Id == drop.CollectibleItem.Id);
-        if (collectibleDataIndex != -1)
-        {
-            collectibleDataList[collectibleDataIndex].Add(drop.Count);
-        }
-        else
-        {
-            CollectibleData data = new CollectibleData(drop.CollectibleItem.Id, drop.Count);
-            CollectiblePackage package = new CollectiblePackage(data, drop.CollectibleItem);
-            collectibleDataList.Add(data);
-            collectiblePackages.Add(package);
-            OnCollectibleAddEvent?.Invoke(package);
-        }
-    }
+		int collectibleDataIndex = _collectibleDataList.FindIndex(x => x.Id == drop.CollectibleItem.Id);
+		if (collectibleDataIndex != -1)
+		{
+			_collectibleDataList[collectibleDataIndex].Add(drop.Count);
+		}
+		else
+		{
+			var data = new CollectibleData(drop.CollectibleItem.Id, drop.Count);
+			var package = new CollectiblePackage(data, drop.CollectibleItem);
+			_collectibleDataList.Add(data);
+			_collectiblePackages.Add(package);
+			OnCollectibleAddEvent?.Invoke(package);
+		}
+	}
 
-    public void AddPlaceable(PlaceableData placeableData)
-    {
-        placeableDataList.Add(placeableData);
-    }
+	public void AddPlaceable(PlaceableData placeableData)
+	{
+		_placeableDataList.Add(placeableData);
+	}
 
-    public void RemovePlaceable(PlaceableData placeableData)
-    {
-        placeableDataList.Remove(placeableData);
-    }
+	public void RemovePlaceable(PlaceableData placeableData)
+	{
+		_placeableDataList.Remove(placeableData);
+	}
 
-    public bool TryGetCollectibleData(CollectibleLoadConfig loadConfig, out List<CollectiblePackage> resultCollectiblePackage)
-    {
-        resultCollectiblePackage = new List<CollectiblePackage>();
+	public bool TryGetCollectibleData(CollectibleLoadConfig loadConfig, out List<CollectiblePackage> resultCollectiblePackage)
+	{
+		resultCollectiblePackage = new List<CollectiblePackage>();
 
-        List<CollectibleDatabase> databases = collectibleDatabaseList.FindAll(x => (loadConfig.FullDatabase & x.CollectibleType) > 0);
-        for (int i = 0; i < databases.Count; i++)
-            resultCollectiblePackage.AddRange(collectiblePackages.FindAll(x => databases[i].CollectibleList.Contains(x.CollectibleItem)));
+		List<CollectibleDatabase> databases = _collectibleDatabaseList.FindAll(x => (loadConfig.FullDatabase & x.CollectibleType) > 0);
+		for (int i = 0; i < databases.Count; i++)
+			resultCollectiblePackage.AddRange(_collectiblePackages.FindAll(x => databases[i].CollectibleList.Contains(x.CollectibleItem)));
 
-        resultCollectiblePackage.AddRange(collectiblePackages.FindAll(x =>
-            loadConfig.IDDistinct.Contains(x.CollectibleItem.Id)
-        ));
+		resultCollectiblePackage.AddRange(_collectiblePackages.FindAll(x =>
+			loadConfig.IDDistinct.Contains(x.CollectibleItem.Id)
+		));
 
-        resultCollectiblePackage.AddRange(collectiblePackages.FindAll(x =>
-            loadConfig.IDRanges.Exists(r => r.Start <= x.CollectibleItem.Id && x.CollectibleItem.Id < r.End)
-        ));
+		resultCollectiblePackage.AddRange(_collectiblePackages.FindAll(x =>
+			loadConfig.IDRanges.Exists(r => r.Start <= x.CollectibleItem.Id && x.CollectibleItem.Id < r.End)
+		));
 
-        return resultCollectiblePackage.Count > 0;
-    }
+		return resultCollectiblePackage.Count > 0;
+	}
 
-    public bool CheckComplianceConfig(CollectibleLoadConfig loadConfig, CollectiblePackage collectiblePackage)
-    {
-        List<CollectibleDatabase> databases = collectibleDatabaseList.FindAll(x => (loadConfig.FullDatabase & x.CollectibleType) > 0);
-        for (int i = 0; i < databases.Count; i++)
-            if (databases[i].CollectibleList.Contains(collectiblePackage.CollectibleItem))
-                return true;
+	public bool CheckComplianceConfig(CollectibleLoadConfig loadConfig, CollectiblePackage collectiblePackage)
+	{
+		List<CollectibleDatabase> databases = _collectibleDatabaseList.FindAll(x => (loadConfig.FullDatabase & x.CollectibleType) > 0);
+		for (int i = 0; i < databases.Count; i++)
+			if (databases[i].CollectibleList.Contains(collectiblePackage.CollectibleItem))
+				return true;
 
-        if (loadConfig.IDDistinct.Contains(collectiblePackage.CollectibleItem.Id))
-            return true;
+		if (loadConfig.IDDistinct.Contains(collectiblePackage.CollectibleItem.Id))
+			return true;
 
-        if (loadConfig.IDRanges.Exists(r => r.Start <= collectiblePackage.CollectibleItem.Id && collectiblePackage.CollectibleItem.Id < r.End))
-            return true;
+		if (loadConfig.IDRanges.Exists(r => r.Start <= collectiblePackage.CollectibleItem.Id && collectiblePackage.CollectibleItem.Id < r.End))
+			return true;
 
-        return false;
-    }
+		return false;
+	}
 
-    public bool TryGetCollectibleData(CollectibleItem collectibleItem, out CollectibleData collectibleData)
-    {
-        CollectiblePackage package = collectiblePackages.Find(x => x.CollectibleItem.Equals(collectibleItem));
-        if (package != null)
-        {
-            collectibleData = package.CollectibleData;
-            return true;
-        }
-        collectibleData = null;
-        return false;
-    }
+	public bool TryGetCollectibleData(CollectibleItem collectibleItem, out CollectibleData collectibleData)
+	{
+		CollectiblePackage package = _collectiblePackages.Find(x => x.CollectibleItem.Equals(collectibleItem));
+		if (package != null)
+		{
+			collectibleData = package.CollectibleData;
+			return true;
+		}
+		collectibleData = null;
+		return false;
+	}
 
-    [ContextMenu("Load")]
-    private void Load()
-    {
-        LoadData();
-        LoadResources();
-        InitializeCollectionPackages();
-        InitializePlaceableObjects();
-    }
+	[ContextMenu("Load")]
+	private void Load()
+	{
+		LoadData();
+		LoadResources();
+		InitializeCollectionPackages();
+		InitializePlaceableObjects();
+	}
 
-    [ContextMenu("Save")]
-    private void Save()
-    {
-        SaveGame.Save("save_collectible.dat", collectibleDataList);
-        SaveGame.Save("save_placeable.dat", placeableDataList);
-    }
+	[ContextMenu("Save")]
+	private void Save()
+	{
+		SaveGame.Save("save_collectible.dat", _collectibleDataList);
+		SaveGame.Save("save_placeable.dat", _placeableDataList);
+	}
 
-    private void LoadData()
-    {
-        collectibleDataList = SaveGame.Load<List<CollectibleData>>("save_collectible.dat", false, "FarmOfDmitryZinovsky");
-        collectibleDataList ??= new List<CollectibleData>() { new CollectibleData(1001, 3), new CollectibleData(1002, 3) };
-        placeableDataList = SaveGame.Load<List<PlaceableData>>("save_placeable.dat", false, "FarmOfDmitryZinovsky");
-        placeableDataList ??= new List<PlaceableData>();
-    }
+	private void LoadData()
+	{
+		_collectibleDataList = SaveGame.Load<List<CollectibleData>>("save_collectible.dat", false, "FarmOfDmitryZinovsky");
+		_collectibleDataList ??= new List<CollectibleData>() { new CollectibleData(1001, 3), new CollectibleData(1002, 3) };
+		_placeableDataList = SaveGame.Load<List<PlaceableData>>("save_placeable.dat", false, "FarmOfDmitryZinovsky");
+		_placeableDataList ??= new List<PlaceableData>();
+	}
 
-    private void LoadResources()
-    {
-        collectibleDatabaseList = Resources.LoadAll<CollectibleDatabase>("CollectibleItems").ToList();
-        collectibleDatabaseList.ForEach(x => collectibleItems.AddRange(x.CollectibleList));
-        initializableItemList = Resources.LoadAll<InitializableItem>("InitializableItems").ToList();
-    }
+	private void LoadResources()
+	{
+		_collectibleDatabaseList = Resources.LoadAll<CollectibleDatabase>("CollectibleItems").ToList();
+		_collectibleDatabaseList.ForEach(x => _collectibleItems.AddRange(x.CollectibleList));
+		_initializableItemList = Resources.LoadAll<InitializableItem>("InitializableItems").ToList();
+	}
 
-    private void InitializeCollectionPackages()
-    {
-        for (int i = 0; i < collectibleDataList.Count; i++)
-        {
-            int collectibleItemIndex = collectibleItems.FindIndex(x => x.Id == collectibleDataList[i].Id);
-            if (collectibleItemIndex != -1)
-            {
-                collectiblePackages.Add(new CollectiblePackage(collectibleDataList[i], collectibleItems[collectibleItemIndex]));
-            }
-        }
-    }
+	private void InitializeCollectionPackages()
+	{
+		for (int i = 0; i < _collectibleDataList.Count; i++)
+		{
+			int collectibleItemIndex = _collectibleItems.FindIndex(x => x.Id == _collectibleDataList[i].Id);
+			if (collectibleItemIndex != -1)
+			{
+				_collectiblePackages.Add(new CollectiblePackage(_collectibleDataList[i], _collectibleItems[collectibleItemIndex]));
+			}
+		}
+	}
 
-    private void InitializePlaceableObjects()
-    {
-        for (int i = 0; i < placeableDataList.Count; i++)
-        {
-            int initializebleItemIndex = initializableItemList.FindIndex(x => x.Id == placeableDataList[i].Id);
-            if (initializebleItemIndex != -1)
-            {
-                if (placeableDataList[i] is PlantPlaceableData plantPlaceableData)
-                {
-                    (gridSystem.InitializeObjectOnCellPosition(initializableItemList[initializebleItemIndex].InitializableObject, placeableDataList[i].Position) as Plant)?
-                        .Initialize(initializableItemList[initializebleItemIndex], plantPlaceableData);
-                }
-            }
-        }
-    }
+	private void InitializePlaceableObjects()
+	{
+		for (int i = 0; i < _placeableDataList.Count; i++)
+		{
+			int initializebleItemIndex = _initializableItemList.FindIndex(x => x.Id == _placeableDataList[i].Id);
+			if (initializebleItemIndex != -1)
+			{
+				if (_placeableDataList[i] is PlantPlaceableData plantPlaceableData)
+				{
+					var plant = _gridSystem.InitializeObjectOnCellPosition(_initializableItemList[initializebleItemIndex].InitializableObject, _placeableDataList[i].Position) as Plant;
+					if (plant != null)
+						plant.Initialize(_initializableItemList[initializebleItemIndex], plantPlaceableData);
+				}
+			}
+		}
+	}
 }

@@ -4,9 +4,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "CollectibleDatabase", menuName = "Farm/CollectibleItem/Database", order = -1)]
 public class CollectibleDatabase : ScriptableObject
 {
-    [SerializeField] private CollectibleType collectibleType;
-    [SerializeField] private List<CollectibleItem> collectibleItemList = new List<CollectibleItem>();
+	[SerializeField] private CollectibleType _collectibleType;
+	[SerializeField] private List<CollectibleItem> _collectibleItemList = new();
 
-    public CollectibleType CollectibleType => collectibleType;
-    public List<CollectibleItem> CollectibleList => collectibleItemList;
+	public CollectibleType CollectibleType => _collectibleType;
+	public List<CollectibleItem> CollectibleList => _collectibleItemList;
 }

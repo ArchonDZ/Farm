@@ -7,66 +7,66 @@ using Zenject;
 [RequireComponent(typeof(DragableUIFromCurtain))]
 public class CollectibleObject : MonoBehaviour
 {
-    [SerializeField] private DragableUIFromCurtain dragable;
-    [SerializeField] private TextMeshProUGUI titleText;
-    [SerializeField] private TextMeshProUGUI countText;
-    [SerializeField] private Image iconImage;
+	[SerializeField] private DragableUIFromCurtain _dragable;
+	[SerializeField] private TextMeshProUGUI _titleText;
+	[SerializeField] private TextMeshProUGUI _countText;
+	[SerializeField] private Image _iconImage;
 
-    [Inject] private PlacementHelper placementHelper;
+	[Inject] private readonly PlacementHelper _placementHelper;
 
-    private CollectiblePackage collectiblePackage;
+	private CollectiblePackage _collectiblePackage;
 
-    public CollectibleItem CollectibleItem => collectiblePackage.CollectibleItem;
+	public CollectibleItem CollectibleItem => _collectiblePackage.CollectibleItem;
 
-    public void Initialize(CollectiblePackage package, CurtainPanel curtainPanel)
-    {
-        collectiblePackage = package;
-        iconImage.sprite = collectiblePackage.CollectibleItem.Icon;
-        titleText.text = collectiblePackage.CollectibleItem.Name;
-        collectiblePackage.CollectibleData.Count.Subscribe(UpdateObject).AddTo(this);
+	public void Initialize(CollectiblePackage package, CurtainPanel curtainPanel)
+	{
+		_collectiblePackage = package;
+		_iconImage.sprite = _collectiblePackage.CollectibleItem.Icon;
+		_titleText.text = _collectiblePackage.CollectibleItem.Name;
+		_collectiblePackage.CollectibleData.Count.Subscribe(UpdateObject).AddTo(this);
 
-        dragable.Initialize(curtainPanel);
-        dragable.OnLeftCurtainEvent += Dragable_OnLeftCurtainEvent;
-    }
+		_dragable.Initialize(curtainPanel);
+		_dragable.OnLeftCurtainEvent += Dragable_OnLeftCurtainEvent;
+	}
 
-    public void Spend()
-    {
-        if (collectiblePackage.CollectibleData.TrySpend(1))
-        {
-            if (collectiblePackage.CollectibleData.Count.CurrentValue == 0)
-            {
-                placementHelper.Deactivate();
-            }
-        }
-    }
+	public void Spend()
+	{
+		if (_collectiblePackage.CollectibleData.TrySpend(1))
+		{
+			if (_collectiblePackage.CollectibleData.Count.CurrentValue == 0)
+			{
+				_placementHelper.Deactivate();
+			}
+		}
+	}
 
-    void OnDestroy()
-    {
-        dragable.OnLeftCurtainEvent -= Dragable_OnLeftCurtainEvent;
-    }
+	void OnDestroy()
+	{
+		_dragable.OnLeftCurtainEvent -= Dragable_OnLeftCurtainEvent;
+	}
 
-    private void UpdateObject(int count)
-    {
-        if (count > 0)
-        {
-            if (!gameObject.activeSelf)
-            {
-                gameObject.SetActive(true);
-            }
+	private void UpdateObject(int count)
+	{
+		if (count > 0)
+		{
+			if (!gameObject.activeSelf)
+			{
+				gameObject.SetActive(true);
+			}
 
-            countText.text = count.ToString();
-        }
-        else
-        {
-            if (gameObject.activeSelf)
-            {
-                gameObject.SetActive(false);
-            }
-        }
-    }
+			_countText.text = count.ToString();
+		}
+		else
+		{
+			if (gameObject.activeSelf)
+			{
+				gameObject.SetActive(false);
+			}
+		}
+	}
 
-    private void Dragable_OnLeftCurtainEvent()
-    {
-        placementHelper.ActivateCollectibleForEveryFrame(this, collectiblePackage.CollectibleItem.Icon);
-    }
+	private void Dragable_OnLeftCurtainEvent()
+	{
+		_placementHelper.ActivateCollectibleForEveryFrame(this, _collectiblePackage.CollectibleItem.Icon);
+	}
 }

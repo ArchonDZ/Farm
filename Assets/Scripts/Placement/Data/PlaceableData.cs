@@ -4,15 +4,15 @@ using UnityEngine;
 [Serializable]
 public class PlaceableData
 {
-    [SerializeField] private int id;
-    [SerializeField] private Vector3 position;
+	[SerializeField] private int _id;
+	[SerializeField] private Vector3 _position;
 
-    public int Id => id;
-    public Vector3 Position { get => position; set => position = value; }
+	public int Id => _id;
+	public Vector3 Position { get => _position; set => _position = value; }
 
-    public PlaceableData(int _id, Vector3 _position)
-    {
-        id = _id;
-        position = _position;
-    }
+	public PlaceableData(int id, Vector3 position)
+	{
+		_id = id;
+		_position = position;
+	}
 }

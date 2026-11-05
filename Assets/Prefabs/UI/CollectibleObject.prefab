@@ -239,10 +239,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8c3b9c2c3f224944863206bd3f983b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragable: {fileID: 8486631861682181001}
-  titleText: {fileID: 5470294630881846216}
-  countText: {fileID: 6465733179922775673}
-  iconImage: {fileID: 1872914309961441522}
+  _dragable: {fileID: 8486631861682181001}
+  _titleText: {fileID: 5470294630881846216}
+  _countText: {fileID: 6465733179922775673}
+  _iconImage: {fileID: 1872914309961441522}
 --- !u!114 &8486631861682181001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,8 +255,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28583c3a330a9474aa1c581092257493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragableImage: {fileID: 1872914309961441522}
-  rectTransformBorder: {fileID: 6132028757059261656}
+  _dragableImage: {fileID: 1872914309961441522}
+  _rectTransformBorder: {fileID: 1752595770887859924}
 --- !u!1 &7421876210846693792
 GameObject:
   m_ObjectHideFlags: 0

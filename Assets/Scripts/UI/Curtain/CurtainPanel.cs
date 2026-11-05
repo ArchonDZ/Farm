@@ -3,30 +3,30 @@ using UnityEngine.UI;
 
 public abstract class CurtainPanel : MonoBehaviour
 {
-    [SerializeField] private Button buttonOpen;
+	[SerializeField] private Button _buttonOpen;
 
-    protected bool isOpened;
+	protected bool _isOpened;
 
-    void Awake()
-    {
-        buttonOpen.onClick.AddListener(ChangePanel);
-        VirtualAwake();
-    }
+	void Awake()
+	{
+		_buttonOpen.onClick.AddListener(ChangePanel);
+		VirtualAwake();
+	}
 
-    protected void ChangePanel()
-    {
-        if (isOpened)
-        {
-            ClosePanel();
-        }
-        else
-        {
-            OpenPanel();
-        }
-    }
+	protected void ChangePanel()
+	{
+		if (_isOpened)
+		{
+			ClosePanel();
+		}
+		else
+		{
+			OpenPanel();
+		}
+	}
 
-    protected virtual void VirtualAwake() { }
+	protected virtual void VirtualAwake() { }
 
-    public abstract void ClosePanel();
-    public abstract void OpenPanel();
+	public abstract void ClosePanel();
+	public abstract void OpenPanel();
 }

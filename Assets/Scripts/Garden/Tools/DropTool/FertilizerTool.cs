@@ -6,34 +6,34 @@ using Zenject;
 
 public class FertilizerTool : DropTool
 {
-    [SerializeField] private FertilizerCommonCollectibleItem collectibleItem;
-    [SerializeField] private TMP_Text countText;
-    [SerializeField] private Image image;
+	[SerializeField] private FertilizerCommonCollectibleItem _collectibleItem;
+	[SerializeField] private TMP_Text _countText;
+	[SerializeField] private Image _image;
 
-    [Inject] private CollectionSystem collectionSystem;
+	[Inject] private readonly CollectionSystem _collectionSystem;
 
-    private CollectibleData data;
+	private CollectibleData _data;
 
-    void Start()
-    {
-        image.sprite = collectibleItem.Icon;
-        collectionSystem.AddDrop(new Drop(0, collectibleItem));
-        if (collectionSystem.TryGetCollectibleData(collectibleItem, out CollectibleData collectibleData))
-        {
-            data = collectibleData;
-            data.Count.Subscribe(CheckRemainCount).AddTo(this);
-        }
-    }
+	void Start()
+	{
+		_image.sprite = _collectibleItem.Icon;
+		_collectionSystem.AddDrop(new Drop(0, _collectibleItem));
+		if (_collectionSystem.TryGetCollectibleData(_collectibleItem, out CollectibleData data))
+		{
+			_data = data;
+			_data.Count.Subscribe(CheckRemainCount).AddTo(this);
+		}
+	}
 
-    private void CheckRemainCount(int count)
-    {
-        countText.text = count.ToString();
-        gameObject.SetActive(0 < count);
-    }
+	private void CheckRemainCount(int count)
+	{
+		_countText.text = count.ToString();
+		gameObject.SetActive(0 < count);
+	}
 
-    protected override void Apply(Plant plant)
-    {
-        if (data.TrySpend(1))
-            plant.Fertilize(collectibleItem.AccelerationGrowth);
-    }
+	protected override void Apply(Plant plant)
+	{
+		if (_data.TrySpend(1))
+			plant.Fertilize(_collectibleItem.AccelerationGrowth);
+	}
 }
